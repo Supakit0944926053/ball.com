@@ -3,482 +3,595 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เมนูดิจิทัล - ครัวเล็กเล็ก</title>
+    <title>Pro Football Analyzer - Full & Half-Time Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --gold: #D4AF37;
-            --white: #FFFFFF;
-            --accent: #ff4500; 
-            --danger: #d9534f;
-            --info: #3498db;
-            --bg-review: #2dd4bf; /* สีเขียวมิ้นท์สำหรับรีวิวลูกค้า */
-        }
-        
-        body, html {
-            margin: 0; padding: 0;
-            width: 100%; height: 100%;
-            overflow: hidden;
-            background: radial-gradient(circle at center, #222 0%, #000 100%);
-            font-family: 'Kanit', sans-serif;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header สีดำ Premium */
-        .header {
-            height: 12vh;
-            background: #111115;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 5px solid var(--gold);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-            z-index: 100;
-            position: relative;
-        }
-        .logo { height: 8vh; margin-right: 15px; }
-        .shop-name { font-size: 5.5vh; font-weight: 600; color: #ffffff; margin: 0; }
-        .shop-name span { color: var(--gold); }
-
-        .header-right {
-            position: absolute;
-            right: 30px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .info-badge {
-            background: rgba(52, 152, 219, 0.2);
-            border: 1px solid var(--info);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-size: 1.8vh;
-            font-weight: 500;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            line-height: 1.2;
-        }
-
-        .holiday-badge {
-            background: rgba(217, 83, 79, 0.2);
-            border: 1px solid var(--danger);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 8px;
-            font-size: 2vh;
-            font-weight: 500;
-        }
-
-        #display-area {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 25px;
-            padding: 20px;
-            position: relative;
-        }
-
-        .menu-card {
-            height: 75vh;
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            border-radius: 20px;
-            position: relative;
-            background: #1a1a1a;
-            border: 2px solid rgba(214, 175, 55, 0.4);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-        }
-
-        /* กรอบทองดารา VIP */
-        .special-card {
-            border: 3px solid var(--gold);
-        }
-
-        /* กรอบสีมิ้นท์รีวิวลูกค้า */
-        .review-card {
-            border: 3px solid var(--bg-review);
-        }
-
-        .thanks-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.7) 60%, transparent 100%);
-            padding: 80px 20px 40px 20px;
-            color: white;
-            text-align: center;
-            z-index: 30;
-        }
-
-        .thanks-text {
-            font-size: 4.8vh;
-            font-weight: 600;
-            text-shadow: 2px 2px 5px rgba(0,0,0,1), 0 0 25px rgba(212, 175, 55, 0.4);
-            line-height: 1.5;
-            animation: slideUp 1s ease-out forwards;
-        }
-
-        .thanks-text span { 
-            color: var(--gold); 
-            font-size: 5.8vh;
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-        }
-
-        /* ไฮไลท์สำหรับหน้ารีวิวลูกค้า */
-        .thanks-text .client-highlight {
-            color: var(--bg-review);
-            font-size: 5.2vh;
-            text-shadow: 0 0 15px rgba(45, 212, 191, 0.4);
-        }
-
-        .badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--accent);
-            color: white;
-            padding: 8px 25px;
-            border-radius: 50px;
-            font-size: 2.8vh;
-            font-weight: bold;
-            z-index: 10;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .menu-img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            animation: kenburns 15s ease-in-out infinite alternate;
-        }
-
-        @keyframes kenburns {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.08); }
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .ticker-wrap {
-            width: 100%;
-            overflow: hidden;
-            background: linear-gradient(90deg, var(--gold), #f3d060, var(--gold));
-            color: #000;
-            height: 4.5vh;
-            display: flex;
-            align-items: center;
-        }
-
-        .ticker-move {
-            white-space: nowrap;
-            animation: ticker 40s linear infinite;
-            font-weight: 500;
-            font-size: 2.4vh;
-        }
-
-        @keyframes ticker {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
-        .footer {
-            height: 6vh;
-            background: #000;
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .footer-text { font-size: 2.8vh; }
-        .footer-text b { color: var(--gold); }
-
-        .fade-in {
-            animation: fadeIn 1s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        body { font-family: 'Prompt', sans-serif; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen py-10 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- หัวข้อแอป -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-emerald-400 mb-2">⚽ PRO FOOTBALL ANALYZER (FULL & HALF-TIME)</h1>
+            <p class="text-slate-400 text-sm md:text-base">ระบบวิเคราะห์ก่อนเกม และระบบวิเคราะห์เจาะลึกเฉพาะ "ครึ่งหลัง (Live HT Analyzer)" เมื่อเกมผ่านไปแล้ว 45 นาที</p>
+        </div>
 
-    <div class="header">
-        <img src="https://img1.pic.in.th/images/463db0d541fac072645010af74c29e67.jpg" class="logo">
-        <h1 class="shop-name">ครัว<span>เล็กเล็ก</span></h1>
-        
-        <div class="header-right">
-            <div class="info-badge">
-                <span>เปิดบริการ</span>
-                <strong>11:00 - 20:00</strong>
+        <!-- แถบเลือกลีกหรือพิมพ์เอง -->
+        <div class="bg-slate-900 p-5 rounded-2xl shadow-xl border border-slate-800 mb-6">
+            <label class="block text-sm font-bold text-emerald-400 mb-2">🏆 เลือกลีกหรือพิมพ์ชื่อรายการแข่งขัน</label>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <select id="select_league_dropdown" onchange="onLeagueSelectChange()" class="md:col-span-1 bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 font-medium">
+                    <option value="epl" selected>🏴󠁧󠁢󠁥󠁮󠁧󠁿 พรีเมียร์ลีกอังกฤษ</option>
+                    <option value="championship">🏴󠁧󠁢󠁥󠁮󠁧󠁿 แชมเปี้ยนชิพ อังกฤษ</option>
+                    <option value="laliga">🇪🇸 ลาลีกา สเปน</option>
+                    <option value="bundesliga">🇩🇪 บุนเดสลีกา เยอรมนี</option>
+                    <option value="seriea">🇮🇹 เซเรีย อา อิตาลี</option>
+                    <option value="ligue1">🇫🇷 ลีกเอิง ฝรั่งเศส</option>
+                    <option value="ucl">🇪🇺 ยูฟ่า แชมเปี้ยนส์ลีก</option>
+                    <option value="other">✏️ พิมพ์ชื่อลีก/ถ้วยอื่นๆ เอง...</option>
+                </select>
+                <input type="text" id="custom_league_input" value="English Premier League" placeholder="พิมพ์ชื่อลีกที่ต้องการ..." class="md:col-span-2 bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 font-medium">
             </div>
-            <div class="holiday-badge">❌ หยุดทุกวันพุธ</div>
         </div>
-    </div>
 
-    <div id="display-area"></div>
-
-    <div class="ticker-wrap">
-        <div class="ticker-move">
-             🔥 วัตถุดิบสดใหม่คัดสรรจานต่อจาน <span>•</span> 📞 สำรองที่นั่งล่วงหน้าด่วน โทร 091-2398627 <span>•</span> 🔵 ติดตามส่วนลดพิเศษได้ที่ Facebook Page: ครัวเล็กเล็ก <span>•</span> ✨ ขอให้มีความสุขกับมื้ออาหารสุดพิเศษนะครับ ✨
+        <!-- โหมดการวิเคราะห์ (Pre-Match / Live HT) -->
+        <div class="bg-slate-900 p-4 rounded-2xl shadow-xl border border-slate-800 mb-6 flex justify-center gap-4">
+            <button id="btn_mode_full" onclick="switchMode('full')" class="bg-emerald-500 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-sm transition-all cursor-pointer shadow-md">
+                📊 วิเคราะห์เต็มเวลา (Pre-Match)
+            </button>
+            <button id="btn_mode_ht" onclick="switchMode('ht')" class="bg-slate-800 text-slate-300 hover:bg-slate-700 font-bold px-6 py-2.5 rounded-xl text-sm transition-all cursor-pointer">
+                ⏱️ วิเคราะห์ครึ่งหลังสดๆ (Live HT Analysis)
+            </button>
         </div>
-    </div>
 
-    <div class="footer">
-        <div class="footer-text">จองโต๊ะ โทร: <b>091-2398627</b></div>
-        <div style="font-size: 2.4vh;">🔵 FB: ครัวเล็กเล็ก</div>
+        <!-- แผงกรอกสกอร์ครึ่งแรก (ซ่อนไว้โดยค่าเริ่มต้น) -->
+        <div id="ht_input_section" class="hidden bg-slate-900 p-6 rounded-2xl shadow-xl border border-sky-500/40 mb-6 space-y-4">
+            <h3 class="text-lg font-bold text-sky-400 flex items-center gap-2">
+                ⏱️ ผลสกอร์และสถานการณ์เมื่อจบครึ่งแรก (Half-Time Status)
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <label class="block text-sm text-sky-400 font-bold mb-2">ประตูเจ้าบ้าน ครึ่งแรก (HT Home Goals)</label>
+                    <select id="ht_home_goals" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white font-bold text-center">
+                        <option value="0" selected>0 ประตู</option>
+                        <option value="1">1 ประตู</option>
+                        <option value="2">2 ประตู</option>
+                        <option value="3">3 ประตูขึ้นไป</option>
+                    </select>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <label class="block text-sm text-amber-400 font-bold mb-2">ประตูทีมเยือน ครึ่งแรก (HT Away Goals)</label>
+                    <select id="ht_away_goals" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white font-bold text-center">
+                        <option value="0" selected>0 ประตู</option>
+                        <option value="1">1 ประตู</option>
+                        <option value="2">2 ประตู</option>
+                        <option value="3">3 ประตูขึ้นไป</option>
+                    </select>
+                </div>
+            </div>
+            <p class="text-xs text-slate-400 text-center">*ระบบจะนำสกอร์ครึ่งแรกนี้ไปคำนวณโมเมนตัมแก้เกมและทำนายสกอร์เฉพาะใน "ครึ่งหลัง" ให้ทันที</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- ทีมเจ้าบ้าน -->
+            <div class="bg-slate-900 p-6 rounded-2xl shadow-xl border border-slate-800">
+                <h2 class="text-xl font-bold text-sky-400 mb-4 flex items-center gap-2">
+                    🏠 ทีมเจ้าบ้าน (Home Team)
+                </h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-slate-300 mb-1">เลือกทีมด่วน (Quick Preset)</label>
+                        <select id="select_home" onchange="onTeamSelect('home')" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-sky-500 mb-2">
+                        </select>
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="text" id="home_name" value="Manchester City" class="col-span-2 bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm">
+                            <input type="number" id="home_rank" value="1" min="1" max="20" placeholder="อันดับ" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-center text-sky-400 font-bold text-sm" title="อันดับในตารางคะแนน">
+                        </div>
+                        <span class="text-[11px] text-slate-400 mt-1 block">*ช่องขวาสุดใส่ "อันดับปัจจุบัน" ในตารางคะแนน</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-slate-300 mb-1">ผล 5 นัดล่าสุด (W=ชนะ, D=เสมอ, L=แพ้)</label>
+                        <div class="grid grid-cols-5 gap-2" id="home_results_container"></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-slate-300 mb-1">ประตูยิงได้แต่ละนัด (เก่า -> ใหม่)</label>
+                        <div class="grid grid-cols-5 gap-2" id="home_scored_container"></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-slate-300 mb-1">ประตูเสียแต่ละนัด (เก่า -> ใหม่)</label>
+                        <div class="grid grid-cols-5 gap-2" id="home_conceded_container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ทีมเยือน -->
+            <div class="bg-slate-900 p-6 rounded-2xl shadow-xl border border-slate-800">
+                <h2 class="text-xl font-bold text-amber-400 mb-4 flex items-center gap-2">
+                    ✈️ ทีมเยือน (Away Team)
+                </h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-slate-300 mb-1">เลือกทีมด่วน (Quick Preset)</label>
+                        <select id="select_away" onchange="onTeamSelect('away')" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-sky-500 mb-2">
+                        </select>
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="text" id="away_name" value="Real Madrid" class="col-span-2 bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm">
+                            <input type="number" id="away_rank" value="4" min="1" max="20" placeholder="อันดับ" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-center text-amber-400 font-bold text-sm" title="อันดับในตารางคะแนน">
+                        </div>
+                        <span class="text-[11px] text-slate-400 mt-1 block">*ช่องขวาสุดใส่ "อันดับปัจจุบัน" ในตารางคะแนน</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-slate-300 mb-1">ผล 5 นัดล่าสุด (W=ชนะ, D=เสมอ, L=แพ้)</label>
+                        <div class="grid grid-cols-5 gap-2" id="away_results_container"></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-slate-300 mb-1">ประตูยิงได้แต่ละนัด (เก่า -> ใหม่)</label>
+                        <div class="grid grid-cols-5 gap-2" id="away_scored_container"></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-slate-300 mb-1">ประตูเสียแต่ละนัด (เก่า -> ใหม่)</label>
+                        <div class="grid grid-cols-5 gap-2" id="away_conceded_container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ปุ่มคำนวณ -->
+        <div class="text-center mb-10">
+            <button onclick="runAnalysis()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-10 py-4 rounded-xl text-lg shadow-lg transition-all cursor-pointer">
+                ⚡ รันระบบวิเคราะห์ความแม่นยำสูง (Precision Run)
+            </button>
+        </div>
+
+        <!-- ผลลัพธ์การวิเคราะห์ -->
+        <div id="result_section" class="hidden bg-slate-900 p-6 md:p-8 rounded-2xl shadow-xl border border-emerald-500/30 space-y-6">
+            <h2 id="result_heading" class="text-2xl font-bold text-center text-emerald-400 mb-6 border-b border-slate-800 pb-4">📊 ผลการวิเคราะห์และทำนายเกม</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <h3 class="font-bold text-sky-400" id="res_home_title">เจ้าบ้าน</h3>
+                    <p class="text-sm text-slate-300"><span id="xg_label_text">ค่าคาดการณ์การทำประตู (xG):</span> <span id="res_xg_home" class="font-bold text-emerald-400 text-lg">0</span> ลูก</p>
+                    <p class="text-xs text-slate-400" id="res_home_motivation_text">แรงจูงใจ: -</p>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <h3 class="font-bold text-amber-400" id="res_away_title">ทีมเยือน</h3>
+                    <p class="text-sm text-slate-300"><span id="xg_label_text_2">ค่าคาดการณ์การทำประตู (xG):</span> <span id="res_xg_away" class="font-bold text-emerald-400 text-lg">0</span> ลูก</p>
+                    <p class="text-xs text-slate-400" id="res_away_motivation_text">แรงจูงใจ: -</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <h3 class="font-bold text-slate-200 mb-3 text-center" id="ou_box_title">📈 วิเคราะห์สกอร์ สูง / ต่ำ (Over/Under 2.5)</h3>
+                    <div class="grid grid-cols-2 gap-3 text-center my-auto">
+                        <div class="bg-slate-900 p-3 rounded-lg border border-emerald-500/20">
+                            <span class="block text-xs text-slate-400" id="over_label_text">สูงกว่า 2.5 (Over)</span>
+                            <span id="prob_over" class="text-xl font-bold text-emerald-400">0%</span>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded-lg border border-rose-500/20">
+                            <span class="block text-xs text-slate-400" id="under_label_text">ต่ำกว่า 2.5 (Under)</span>
+                            <span id="prob_under" class="text-xl font-bold text-rose-400">0%</span>
+                        </div>
+                    </div>
+                    <p id="ou_verdict" class="text-xs text-center text-slate-300 mt-3 font-medium">-</p>
+                </div>
+
+                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                    <h3 class="font-bold text-slate-200 mb-3 text-center" id="wdl_box_title">🎯 โอกาสผลการแข่งขัน (Win/Draw/Loss)</h3>
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-slate-900 p-2 rounded-lg">
+                            <span class="block text-[11px] text-slate-400" id="res_home_win_label">เจ้าบ้านชนะ</span>
+                            <span id="prob_home_win" class="text-sm font-bold text-sky-400">0%</span>
+                        </div>
+                        <div class="bg-slate-900 p-2 rounded-lg">
+                            <span class="block text-[11px] text-slate-400" id="res_draw_label">เสมอ</span>
+                            <span id="prob_draw" class="text-sm font-bold text-amber-400">0%</span>
+                        </div>
+                        <div class="bg-slate-900 p-2 rounded-lg">
+                            <span class="block text-[11px] text-slate-400" id="res_away_win_label">ทีมเยือนชนะ</span>
+                            <span id="prob_away_win" class="text-sm font-bold text-rose-400">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                <h3 class="font-bold text-slate-200 mb-3 text-center" id="top_scores_title">🏆 สกอร์เจาะจงที่มีโอกาสเกิดมากที่สุด (Top 3 Scores)</h3>
+                <div id="top_scores_list" class="space-y-2"></div>
+            </div>
+
+            <div class="bg-emerald-950/40 border border-emerald-500/50 p-5 rounded-xl text-center space-y-2">
+                <h3 class="text-lg font-bold text-emerald-300">🔮 บทสรุปฟันธงฉบับโปรมาสเตอร์</h3>
+                <p id="final_verdict" class="text-base text-slate-100 font-medium">-</p>
+            </div>
+        </div>
     </div>
 
     <script>
-        // [1] รายการรูปเมนูอาหารทั้งหมด 49 รูป
-        const menuImages = [
-            "https://img1.pic.in.th/images/512764854_1242582094545158_733963271818714277_n261e78e994b39a6e.jpg",
-            "https://img1.pic.in.th/images/518185631_1260083192795048_6172761668095134701_n33dfd8b348ced7b2.jpg",
-            "https://img2.pic.in.th/518309924_1260132289456805_608003653411166558_n54faa95360929a0a.jpg",
-            "https://img2.pic.in.th/518944471_1262665762536791_3034687933413591951_n3dcc79f8ce653085.jpg",
-            "https://img2.pic.in.th/523122580_1267689408701093_2736552579555197975_n.jpg",
-            "https://img1.pic.in.th/images/539450511_1295918935878140_4887361505576851086_n.jpg",
-            "https://img1.pic.in.th/images/548195611_1313022794167754_2091179585666618733_n7fa609c1832ad01c.jpg",
-            "https://img2.pic.in.th/557596134_1328892295914137_5448378800222139297_n.jpg",
-            "https://img2.pic.in.th/571126216_1352903190179714_3781199523474770985_n50490b72f51b1242.jpg",
-            "https://img1.pic.in.th/images/572421432_1356367263166640_4447074837102631416_n1e5655ecb2dc67f7.jpg",
-            "https://img2.pic.in.th/575123464_1359944166142283_9195548062733492126_n3198ade68ec12f65.jpg",
-            "https://img2.pic.in.th/618558028_1424692493000783_4098435049126030434_n.jpg",
-            "https://img2.pic.in.th/490667917_1184488067021228_4100357186909034877_n.jpg",
-            "https://img1.pic.in.th/images/490692618_1184460263690675_3410704211435490440_n.jpg",
-            "https://img1.pic.in.th/images/490702587_1184737360329632_2751535877505422202_n.jpg",
-            "https://img1.pic.in.th/images/490747490_1186847226785312_1603732594548848287_n.jpg",
-            "https://img2.pic.in.th/490758164_1186844833452218_3318769589573310161_n.jpg",
-            "https://img2.pic.in.th/490918547_1186491923487509_1087929914873290518_n.jpg",
-            "https://img1.pic.in.th/images/490961964_1193384076131627_5088875184322408080_n.jpg",
-            "https://img1.pic.in.th/images/491836224_1186924080110960_863232275377436822_n.jpg",
-            "https://img2.pic.in.th/491843051_1186830400120328_3588404656102061215_n.jpg",
-            "https://img1.pic.in.th/images/491923455_1187118003424901_914732314357607314_n.jpg",
-            "https://img1.pic.in.th/images/491929111_1186841340119234_596625077055860373_n.jpg",
-            "https://img2.pic.in.th/491985715_1191973619606006_4187453192547239545_n.jpg",
-            "https://img2.pic.in.th/492002557_1191976396272395_1601722686402295387_n.jpg",
-            "https://img1.pic.in.th/images/492006849_1186844836785551_5418109630830401989_n.jpg",
-            "https://img2.pic.in.th/492057677_1191980999605268_4909398928559203316_n.jpg",
-            "https://img2.pic.in.th/492189825_1191973489606019_4582669452168849649_n.jpg",
-            "https://img2.pic.in.th/492267813_1193688482767853_3428235767694677331_n.jpg",
-            "https://img1.pic.in.th/images/492553749_1192802646189770_2476022335284586873_n3cf0016b42af475b.jpg",
-            "https://img1.pic.in.th/images/492871081_1194185402718161_606484793202864779_nefde1dc7f9f6e60c.jpg",
-            "https://img1.pic.in.th/images/492951640_1192802642856437_8404800208880529377_n5a39d233efaae2c5.jpg",
-            "https://img2.pic.in.th/492959990_1194881625981872_3821780889944264423_n.jpg",
-            "https://img1.pic.in.th/images/493081306_1196066705863364_7412902564098787742_n.jpg",
-            "https://img1.pic.in.th/images/493277022_1194761005993934_2220062179929120335_n1942bf1fd4f7dd37.jpg",
-            "https://img2.pic.in.th/493280374_1194355246034510_2047030344113212028_nfdbda0344d75caa3.jpg",
-            "https://img1.pic.in.th/images/493406026_1193688506101184_2404893083235625371_n.jpg",
-            "https://img1.pic.in.th/images/493466183_1193688559434512_4585701905244907709_n7742075f60183d4d.jpg",
-            "https://img2.pic.in.th/493496798_1197825232354178_4781643881207173391_n9203d82b024338cb.jpg",
-            "https://img2.pic.in.th/493692912_1193883759414992_814193229466503647_n915f247ab8171232.jpg",
-            "https://img1.pic.in.th/images/493732172_1196063695863665_4838571742287857703_n.jpg",
-            "https://img2.pic.in.th/493842664_1196068819196486_1199522514564538071_n7c94f928910be7aa.jpg",
-            "https://img2.pic.in.th/493971430_1196066592530042_1789774802995933780_n.jpg",
-            "https://img1.pic.in.th/images/493981049_1196063855863649_611724712342705934_n47f090682630cd98.jpg",
-            "https://img2.pic.in.th/494969401_1202807498522618_3305620649011382243_n.jpg",
-            "https://img2.pic.in.th/499539563_1216824160454285_7830991750968822856_n00cc164908dc2661.jpg",
-            "https://img2.pic.in.th/499793471_1214467967356571_1447191606504924972_n4b832d3d98ffcf90.jpg",
-            "https://img1.pic.in.th/images/504673845_1227819929354708_8207604477724626475_n.jpg",
-            "https://img1.pic.in.th/images/505393862_1230099285793439_2613277326110417675_n65bfe7bc8ccfb8fe.jpg"
-        ];
+        let currentMode = 'full'; // 'full' หรือ 'ht'
 
-        // [2] จัดกลุ่มรูปศิลปิน VIP
-        const celebritySets = [
-            {
-                images: ["https://img2.pic.in.th/620007072_1425761852893847_7638332805859317431_n.jpg"],
-                text: 'ขอขอบพระคุณ <span>คุณฮาย อาภาพร นครสวรรค์</span> และทีมงาน<br>ที่เลือก "ครัวเล็กเล็ก" ได้ให้บริการอาหารเย็นก่อนไปงาน ✨'
-            },
-            {
-                images: [
-                    "https://img1.pic.in.th/images/620157233_1427323096071056_1583158199202492255_n.jpg",
-                    "https://img2.pic.in.th/618860533_1427319429404756_8788729712307805789_n.jpg"
-                ],
-                text: 'ขอขอบพระคุณ <span>คุณปุ้ย วง L.กฮ. และทีมงาน</span><br>ที่เลือกให้ "ครัวเล็กเล็ก" ได้ให้บริการอาหารมื้อพิเศษ ✨'
+        const teamPresets = {
+            "Manchester City": { rank: 1, results: ["W","W","W","D","W"], scored: [3, 2, 4, 1, 3], conceded: [1, 0, 1, 1, 0] },
+            "Arsenal": { rank: 2, results: ["W","W","D","W","W"], scored: [2, 3, 1, 4, 2], conceded: [0, 1, 1, 0, 1] },
+            "Liverpool": { rank: 3, results: ["W","D","W","W","W"], scored: [3, 1, 2, 4, 2], conceded: [0, 1, 0, 1, 0] },
+            "Real Madrid": { rank: 1, results: ["W","W","D","W","L"], scored: [2, 3, 1, 2, 1], conceded: [1, 0, 1, 1, 2] },
+            "Barcelona": { rank: 2, results: ["W","L","W","W","D"], scored: [3, 0, 4, 2, 1], conceded: [1, 2, 0, 1, 1] },
+            "Bayern Munich": { rank: 1, results: ["W","W","W","D","W"], scored: [4, 3, 2, 2, 5], conceded: [0, 1, 1, 2, 0] },
+            "Inter Milan": { rank: 1, results: ["W","D","W","W","L"], scored: [2, 1, 3, 2, 0], conceded: [0, 1, 0, 1, 1] },
+            "Paris Saint-Germain": { rank: 1, results: ["W","W","D","W","W"], scored: [3, 2, 2, 4, 3], conceded: [1, 1, 2, 0, 1] },
+            "Manchester United": { rank: 8, results: ["W","D","L","W","D"], scored: [2, 1, 0, 3, 1], conceded: [1, 1, 2, 0, 1] },
+            "Chelsea": { rank: 6, results: ["D","W","L","W","D"], scored: [1, 2, 0, 3, 1], conceded: [1, 0, 2, 1, 1] }
+        };
+
+        function initApp() {
+            const homeSelect = document.getElementById('select_home');
+            const awaySelect = document.getElementById('select_away');
+            
+            let options = `<option value="">-- เลือกทีมจากฐานข้อมูล --</option>`;
+            for (let team in teamPresets) {
+                options += `<option value="${team}">${team}</option>`;
             }
-        ];
+            homeSelect.innerHTML = options;
+            awaySelect.innerHTML = options;
 
-        // [3] โซนรีวิวจากลูกค้าทางบ้าน
-        const reviewSets = [
-            {
-                images: [
-                    "https://i.postimg.cc/8kxpHfVS/641380123-122173807466790977-2331992307828066068-n.jpg",
-                    "https://i.postimg.cc/qvTkffRJ/Screenshot-2026-05-18-220332.png"
-                ], 
-                text: '🗣️ รีวิวจากคุณลูกค้า: <span class="client-highlight">"ทางร้าน “ครัวเล็กเล็ก” ขอขอบคุณ 🙏🏻💖คุณมาวินและเชฟบุช และทีมงานรายการ “เที่ยวฟินกินฉ่ำ”ติดตามได้ทางไทยรัฐทีวี ช่อง 32"</span> ⭐⭐⭐⭐⭐'
-            },
-            {
-                images: ["https://i.postimg.cc/s2JPPRBb/message-Image-1779117804501.jpg"],
-                text: '🗣️ รีวิวจากคุณลูกค้า: <span class="client-highlight">"ทางร้าน “ครัวเล็กเล็ก” ขอขอบคุณ 🙏🏻💖รายการ “มิตรแท้ชวนชิม” ติดตามได้ทาง เพจ Facebook มิตรแท้ชวนชิม เเละ TikTok มิตรแท้ชวนชิม "</span> ⭐⭐⭐⭐⭐'
-            },
-            {
-                images: [
-                    "https://i.postimg.cc/jd7RDx93/message-Image-1779118564898-0.jpg",
-                    "https://i.postimg.cc/MKQzn64r/message-Image-1779118613849-0.jpg"
-                ], 
-                text: '🗣️ รีวิวจากคุณลูกค้า: <span class="client-highlight">"ทางร้าน “ครัวเล็กเล็ก” ขอขอบคุณค้าบ 🙏🏻💖 "</span> ⭐⭐⭐⭐⭐'
-            },
-            {
-                images: [
-                    "https://i.postimg.cc/dtyJhsXH/message-Image-1779118627399-0.jpg",
-                    "https://i.postimg.cc/VLCzJfTV/message-Image-1779118637332-0.jpg"
-                ], 
-                text: '🗣️ รีวิวจากคุณลูกค้า: <span class="client-highlight">"ทางร้าน “ครัวเล็กเล็ก” ขอขอบคุณค้าบ 🙏🏻💖 "</span> ⭐⭐⭐⭐⭐'
-            },
-            {
-                images: [
-                    "https://i.postimg.cc/wTm91qPn/message-Image-1779118650913-0.jpg",
-                    "https://i.postimg.cc/pXFPmW7w/message-Image-1779118659044-0.jpg"
-                ], 
-                text: '🗣️ รีวิวจากคุณลูกค้า: <span class="client-highlight">"ทางร้าน “ครัวเล็กเล็ก” ขอขอบคุณค้าบ 🙏🏻💖 "</span> ⭐⭐⭐⭐⭐'
-            },
-            {
-                images: [
-                    "https://i.postimg.cc/bNtqZyWy/message-Image-1779118667715-0.jpg",
-                    "https://i.postimg.cc/8P6T7p3m/message-Image-1779118674803-0.jpg"
-                ], 
-                text: '🗣️ รีวิวจากคุณลูกค้า: <span class="client-highlight">"ทางร้าน “ครัวเล็กเล็ก” ขอขอบคุณค้าบ 🙏🏻💖 "</span> ⭐⭐⭐⭐⭐'
-            },
-            {
-                images: [
-                    "https://i.postimg.cc/X7CnrjmS/message-Image-1779118681571-0.jpg",
-                    "https://i.postimg.cc/zXgqyz6Y/message-Image-1779118759698.jpg"
-                ], 
-                text: '🗣️ รีวิวจากคุณลูกค้า: <span class="client-highlight">"ทางร้าน “ครัวเล็กเล็ก” ขอขอบคุณค้าบ 🙏🏻💖 "</span> ⭐⭐⭐⭐⭐'
-            }
-        ];
+            homeSelect.value = "Manchester City";
+            awaySelect.value = "Real Madrid";
 
-        let menuIdx = 0;
-        let celebIdx = 0;
-        let reviewIdx = 0;
-        
-        // บังคับสเต็ปเริ่มต้นที่ดารา: 'celeb' -> 'food' -> 'review'
-        let currentMode = 'celeb'; 
-        let timeoutHandle;
-        const badges = ["เมนูแนะนำ ✨", "ต้องลอง! 🔥", "ขายดีที่สุด 👍", "อร่อยคอนเฟิร์ม! ❤️"];
-
-        function updateDisplay() {
-            const area = document.getElementById('display-area');
-            area.innerHTML = '';
-            let displayTime = 10000;
-
-            if (currentMode === 'celeb') {
-                // ================= [ช่วงที่ 1] แสดงรูปดารา VIP =================
-                const currentCeleb = celebritySets[celebIdx];
-                displayTime = 15000; // หน้าดาราค้าง 15 วินาที
-
-                currentCeleb.images.forEach(src => {
-                    const card = document.createElement('div');
-                    card.className = 'menu-card special-card fade-in';
-                    const img = document.createElement('img');
-                    img.className = 'menu-img';
-                    img.src = src;
-                    card.appendChild(img);
-                    area.appendChild(card);
-                });
-
-                const overlay = document.createElement('div');
-                overlay.className = 'thanks-overlay';
-                overlay.innerHTML = `<div class="thanks-text">${currentCeleb.text}</div>`;
-                area.appendChild(overlay);
-
-                celebIdx++;
-                
-                // [แก้ไข] เมื่อเล่นเซ็ตดาราจนครบทั้งหมดที่มีใน Array (ครบ 2 เซ็ต) ค่อยให้ข้ามไปเปิดหน้าเมนูอาหารปกติ
-                if (celebIdx >= celebritySets.length) {
-                    celebIdx = 0; // รีเซ็ตตัวนับดารากลับมารอเปิดรอบใหญ่ถัดไป
-                    currentMode = 'food'; // เปลี่ยนสถานะไปเล่นเมนูอาหารต่อ
-                }
-
-            } else if (currentMode === 'review') {
-                // ================= [ช่วงที่ 3] แสดงรีวิวลูกค้าทั่วไป =================
-                const currentReview = reviewSets[reviewIdx];
-                displayTime = 15000; // หน้ารีวิวค้าง 15 วินาที
-
-                currentReview.images.forEach(src => {
-                    const card = document.createElement('div');
-                    card.className = 'menu-card review-card fade-in';
-                    const img = document.createElement('img');
-                    img.className = 'menu-img';
-                    img.src = src;
-                    card.appendChild(img);
-                    area.appendChild(card);
-                });
-
-                const overlay = document.createElement('div');
-                overlay.className = 'thanks-overlay';
-                overlay.innerHTML = `<div class="thanks-text">${currentReview.text}</div>`;
-                area.appendChild(overlay);
-
-                reviewIdx++;
-                
-                // เมื่อแสดงผลรีวิวเซ็ตปัจจุบันจนครบทุกชุดที่มีใน List (ครบทั้ง 7 รีวิว) แล้ว 
-                // ถึงจะทำการเปลี่ยนโหมดสลับวนกลับไปขึ้นรูปดารา VIP เพื่อเริ่มลูปใหม่ตามลำดับ
-                if (reviewIdx >= reviewSets.length) {
-                    reviewIdx = 0; // รีเซ็ตตัวนับรีวิวกลับไปเริ่มชุดแรก
-                    currentMode = 'celeb'; // เปลี่ยนโหมดไปที่ดารา
-                }
-
-            } else {
-                // ================= [ช่วงที่ 2] แสดงรูปเมนูอาหารปกติ (ทีละ 2 รูป) =================
-                displayTime = 10000; // หน้าเมนูอาหารค้าง 10 วินาที
-                
-                for (let i = 0; i < 2; i++) {
-                    if (menuIdx < menuImages.length) {
-                        const card = document.createElement('div');
-                        card.className = 'menu-card fade-in';
-                        
-                        if (Math.random() > 0.6) {
-                            const b = document.createElement('div');
-                            b.className = 'badge';
-                            b.innerText = badges[Math.floor(Math.random() * badges.length)];
-                            card.appendChild(b);
-                        }
-
-                        const img = document.createElement('img');
-                        img.className = 'menu-img';
-                        img.src = menuImages[menuIdx];
-                        card.appendChild(img);
-                        area.appendChild(card);
-                        menuIdx++;
-                    }
-                }
-
-                // เมื่อเปิดวนจนครบเมนูสุดท้าย (ครบ 49 รูป) ➔ บังคับตัดเข้าหน้ารีวิวลูกค้าต่อทันที
-                if (menuIdx >= menuImages.length) {
-                    menuIdx = 0; // รีเซ็ตตัวนับเพื่อรอบถัดไป
-                    currentMode = 'review';
-                }
-            }
-
-            clearTimeout(timeoutHandle);
-            timeoutHandle = setTimeout(updateDisplay, displayTime);
+            loadTeamPreset('home', "Manchester City");
+            loadTeamPreset('away', "Real Madrid");
         }
 
-        // เริ่มต้นรันระบบ
-        updateDisplay();
+        function switchMode(mode) {
+            currentMode = mode;
+            const btnFull = document.getElementById('btn_mode_full');
+            const btnHt = document.getElementById('btn_mode_ht');
+            const htSection = document.getElementById('ht_input_section');
+
+            if (mode === 'full') {
+                btnFull.className = "bg-emerald-500 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-sm transition-all cursor-pointer shadow-md";
+                btnHt.className = "bg-slate-800 text-slate-300 hover:bg-slate-700 font-bold px-6 py-2.5 rounded-xl text-sm transition-all cursor-pointer";
+                htSection.classList.add('hidden');
+            } else {
+                btnHt.className = "bg-sky-500 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-sm transition-all cursor-pointer shadow-md";
+                btnFull.className = "bg-slate-800 text-slate-300 hover:bg-slate-700 font-bold px-6 py-2.5 rounded-xl text-sm transition-all cursor-pointer";
+                htSection.classList.remove('hidden');
+            }
+        }
+
+        function onLeagueSelectChange() {
+            const dropdown = document.getElementById('select_league_dropdown');
+            const input = document.getElementById('custom_league_input');
+            const selectedText = dropdown.options[dropdown.selectedIndex].text;
+            
+            if (dropdown.value !== 'other') {
+                input.value = selectedText.replace(/^[^\s]+\s/, '');
+            } else {
+                input.value = "";
+                input.focus();
+            }
+        }
+
+        function loadTeamPreset(type, teamName) {
+            const data = teamPresets[teamName];
+            document.getElementById(`${type}_name`).value = teamName;
+            document.getElementById(`${type}_rank`).value = data.rank;
+            renderInteractiveInputs(type, data);
+        }
+
+        function renderInteractiveInputs(type, data) {
+            let resContainer = document.getElementById(`${type}_results_container`);
+            resContainer.innerHTML = "";
+            data.results.forEach((res, i) => {
+                resContainer.innerHTML += `
+                    <select id="${type}_res_${i}" class="bg-slate-950 border border-slate-700 rounded-lg py-2 text-center text-white font-bold text-sm focus:outline-none focus:border-sky-500">
+                        <option value="W" ${res === 'W' ? 'selected' : ''}>W</option>
+                        <option value="D" ${res === 'D' ? 'selected' : ''}>D</option>
+                        <option value="L" ${res === 'L' ? 'selected' : ''}>L</option>
+                    </select>
+                `;
+            });
+
+            let scoredContainer = document.getElementById(`${type}_scored_container`);
+            scoredContainer.innerHTML = "";
+            data.scored.forEach((val, i) => {
+                let opts = "";
+                for (let n = 0; n <= 9; n++) opts += `<option value="${n}" ${n === val ? 'selected' : ''}>${n}</option>`;
+                scoredContainer.innerHTML += `<select id="${type}_sco_${i}" class="bg-slate-950 border border-slate-700 rounded-lg py-2 text-center text-emerald-400 font-bold text-sm focus:outline-none focus:border-sky-500">${opts}</select>`;
+            });
+
+            let concededContainer = document.getElementById(`${type}_conceded_container`);
+            concededContainer.innerHTML = "";
+            data.conceded.forEach((val, i) => {
+                let opts = "";
+                for (let n = 0; n <= 9; n++) opts += `<option value="${n}" ${n === val ? 'selected' : ''}>${n}</option>`;
+                concededContainer.innerHTML += `<select id="${type}_con_${i}" class="bg-slate-950 border border-slate-700 rounded-lg py-2 text-center text-rose-400 font-bold text-sm focus:outline-none focus:border-sky-500">${opts}</select>`;
+            });
+        }
+
+        function onTeamSelect(type) {
+            const select = document.getElementById(`select_${type}`);
+            const teamName = select.value;
+            if (!teamName || !teamPresets[teamName]) return;
+            loadTeamPreset(type, teamName);
+        }
+
+        function getDataFromUI(type) {
+            let results = [], scored = [], conceded = [];
+            for (let i = 0; i < 5; i++) {
+                results.push(document.getElementById(`${type}_res_${i}`).value);
+                scored.push(parseInt(document.getElementById(`${type}_sco_${i}`).value));
+                conceded.push(parseInt(document.getElementById(`${type}_con_${i}`).value));
+            }
+            return {
+                name: document.getElementById(`${type}_name`).value,
+                rank: parseInt(document.getElementById(`${type}_rank`).value) || 10,
+                results, scored, conceded
+            };
+        }
+
+        function calculateMotivation(rank) {
+            if (rank <= 4) {
+                return { factor: 1.15, text: "🔥 แรงจูงใจสูงมาก (ลุ้นแชมป์ / พื้นที่แชมเปี้ยนส์ลีก)" };
+            } else if (rank >= 17) {
+                return { factor: 1.12, text: "🚨 แรงฮึดสูง (โซนหนีตกชั้น สู้ถวายหัว)" };
+            } else if (rank >= 5 && rank <= 8) {
+                return { factor: 1.05, text: "⭐ แรงจูงใจดี (ลุ้นพื้นที่ฟุตบอลยุโรป)" };
+            } else {
+                return { factor: 1.00, text: "⚖️ แรงจูงใจมาตรฐาน (กลางตาราง ลอยตัว)" };
+            }
+        }
+
+        function factorial(n) {
+            if (n === 0 || n === 1) return 1;
+            let sum = 1;
+            for (let i = 2; i <= n; i++) sum *= i;
+            return sum;
+        }
+
+        function poissonProbability(lmbda, k) {
+            return (Math.exp(-lmbda) * Math.pow(lmbda, k)) / factorial(k);
+        }
+
+        function analyzeTeam(teamObj, isHome) {
+            const weights = [2.3, 1.8, 1.4, 1.0, 0.5];
+            const totalWeight = weights.reduce((a, b) => a + b, 0);
+
+            let weightedScored = teamObj.scored.reduce((acc, s, i) => acc + (s * (weights[i] || 1.0)), 0) / totalWeight;
+            let weightedConceded = teamObj.conceded.reduce((acc, c, i) => acc + (c * (weights[i] || 1.0)), 0) / totalWeight;
+
+            weightedScored = Math.min(3.8, Math.max(0.15, weightedScored));
+            weightedConceded = Math.min(3.5, Math.max(0.15, weightedConceded));
+
+            let momentumScore = 0;
+            teamObj.results.forEach((r, idx) => {
+                let w = weights[idx] || 1.0;
+                if (r === 'W') momentumScore += (3 * w);
+                else if (r === 'D') momentumScore += (1 * w);
+            });
+            let momentumMultiplier = 1.0 + ((momentumScore / 33) * 0.12);
+            weightedScored *= momentumMultiplier;
+
+            let motiv = calculateMotivation(teamObj.rank);
+            weightedScored *= motiv.factor;
+
+            if (isHome) weightedScored *= 1.14;
+            else weightedConceded *= 1.09;
+
+            return { name: teamObj.name, avgScored: weightedScored, avgConceded: weightedConceded, motivText: motiv.text };
+        }
+
+        function runAnalysis() {
+            const leagueKey = document.getElementById('select_league_dropdown').value;
+            const leagueMultipliers = {
+                "epl": 1.11,
+                "championship": 1.03,
+                "laliga": 0.93,
+                "bundesliga": 1.19,
+                "seriea": 0.89,
+                "ligue1": 0.97,
+                "ucl": 1.09,
+                "other": 1.05
+            };
+            let leagueMultiplier = leagueMultipliers[leagueKey] || 1.0;
+
+            const homeData = getDataFromUI('home');
+            const awayData = getDataFromUI('away');
+
+            const home = analyzeTeam(homeData, true);
+            const away = analyzeTeam(awayData, false);
+
+            let xgHome = Math.min(3.8, Math.max(0.15, ((home.avgScored + away.avgConceded) / 2) * leagueMultiplier));
+            let xgAway = Math.min(3.8, Math.max(0.15, ((away.avgScored + home.avgConceded) / 2) * leagueMultiplier));
+
+            let htHomeGoals = 0;
+            let htAwayGoals = 0;
+
+            // หากเลือกโหมดวิเคราะห์ครึ่งหลัง (Live HT) ให้ปรับลด xG เหลือครึ่งเดียว (0.5) และบวกสถานการณ์แก้เกม
+            if (currentMode === 'ht') {
+                htHomeGoals = parseInt(document.getElementById('ht_home_goals').value);
+                htAwayGoals = parseInt(document.getElementById('ht_away_goals').value);
+
+                xgHome = xgHome * 0.52;
+                xgAway = xgAway * 0.52;
+
+                // ทีมตามหลังจะโหมบุกหนักขึ้นในครึ่งหลัง (Tactical Adjustment)
+                if (htHomeGoals < htAwayGoals) {
+                    xgHome *= 1.25; // เจ้าบ้านตามหลัง บุกแหลก
+                    xgAway *= 0.90; // ทีมเยือนนำ ผ่อนเกมรับแน่น
+                } else if (htAwayGoals < htHomeGoals) {
+                    xgAway *= 1.25; // ทีมเยือนตามหลัง บุกแหลก
+                    xgHome *= 0.90; // เจ้าบ้านนำ ผ่อนเกมรับแน่น
+                }
+            }
+
+            let scoreMatrix = {};
+            let totalProbSum = 0;
+
+            for (let h = 0; h <= 6; h++) {
+                for (let a = 0; a <= 6; a++) {
+                    let prob = poissonProbability(xgHome, h) * poissonProbability(xgAway, a);
+                    
+                    if (h === 0 && a === 0) prob *= (1 - (xgHome * xgAway * 0.18));
+                    else if (h === 1 && a === 0) prob *= 1.09;
+                    else if (h === 0 && a === 1) prob *= 1.09;
+                    else if (h === 1 && a === 1) prob *= (1 + (xgHome * xgAway * 0.08));
+
+                    scoreMatrix[`${h}-${a}`] = Math.max(0, prob);
+                    totalProbSum += scoreMatrix[`${h}-${a}`];
+                }
+            }
+
+            for (let key in scoreMatrix) {
+                scoreMatrix[key] /= totalProbSum;
+            }
+
+            let homeWinProb = 0, drawProb = 0, awayWinProb = 0;
+            let overProb = 0, underProb = 0;
+
+            for (let h = 0; h <= 6; h++) {
+                for (let a = 0; a <= 6; a++) {
+                    let p = scoreMatrix[`${h}-${a}`];
+                    if (h > a) homeWinProb += p;
+                    else if (h === a) drawProb += p;
+                    else awayWinProb += p;
+
+                    let totalMatchGoals = currentMode === 'ht' ? (htHomeGoals + htAwayGoals + h + a) : (h + a);
+                    let targetLine = currentMode === 'ht' ? (htHomeGoals + htAwayGoals + 0.5) : 2.5;
+
+                    if (totalMatchGoals > targetLine) overProb += p;
+                    else underProb += p;
+                }
+            }
+
+            homeWinProb *= 100;
+            drawProb *= 100;
+            awayWinProb *= 100;
+            overProb *= 100;
+            underProb *= 100;
+
+            let sortedScores = Object.entries(scoreMatrix).sort((a, b) => b[1] - a[1]);
+
+            document.getElementById('result_section').classList.remove('hidden');
+
+            // ปรับข้อความ UI ตามโหมด
+            if (currentMode === 'full') {
+                document.getElementById('result_heading').innerText = "📊 ผลการวิเคราะห์และทำนายเกม (Full-Time)";
+                document.getElementById('xg_label_text').innerText = "ค่าคาดการณ์การทำประตู (xG):";
+                document.getElementById('xg_label_text_2').innerText = "ค่าคาดการณ์การทำประตู (xG):";
+                document.getElementById('ou_box_title').innerText = "📈 วิเคราะห์สกอร์ สูง / ต่ำ (Over/Under 2.5)";
+                document.getElementById('over_label_text').innerText = "สูงกว่า 2.5 (Over)";
+                document.getElementById('under_label_text').innerText = "ต่ำกว่า 2.5 (Under)";
+                document.getElementById('wdl_box_title').innerText = "🎯 โอกาสผลการแข่งขัน (Win/Draw/Loss)";
+                document.getElementById('res_home_win_label').innerText = "เจ้าบ้านชนะ";
+                document.getElementById('res_draw_label').innerText = "เสมอ";
+                document.getElementById('res_away_win_label').innerText = "ทีมเยือนชนะ";
+                document.getElementById('top_scores_title').innerText = "🏆 สกอร์เจาะจงที่มีโอกาสเกิดมากที่สุด (Top 3 Scores - FT)";
+            } else {
+                document.getElementById('result_heading').innerText = "⏱️ ผลการวิเคราะห์เฉพาะ 'ครึ่งหลัง' (Live 2nd Half Analysis)";
+                document.getElementById('xg_label_text').innerText = "xG เฉพาะครึ่งหลัง:";
+                document.getElementById('xg_label_text_2').innerText = "xG เฉพาะครึ่งหลัง:";
+                let currentTotalHT = htHomeGoals + htAwayGoals;
+                let lineTarget = currentTotalHT + 0.5;
+                document.getElementById('ou_box_title').innerText = `📈 สูง / ต่ำ ครึ่งหลัง (Over/Under ${lineTarget} จากสกอร์รวม ${currentTotalHT})`;
+                document.getElementById('over_label_text').innerText = `สูงกว่า ${lineTarget} (Over)`;
+                document.getElementById('under_label_text').innerText = `ต่ำกว่า ${lineTarget} (Under)`;
+                document.getElementById('wdl_box_title').innerText = "🎯 ผลการแข่งขันเฉพาะครึ่งหลัง (2H Only W/D/L)";
+                document.getElementById('res_home_win_label').innerText = "เจ้าบ้านยิงครึ่งหลังมากกว่า";
+                document.getElementById('res_draw_label').innerText = "ครึ่งหลังยิงเท่ากัน";
+                document.getElementById('res_away_win_label').innerText = "ทีมเยือนยิงครึ่งหลังมากกว่า";
+                document.getElementById('top_scores_title').innerText = "🏆 สกอร์ที่คาดว่าจะเกิดขึ้นเฉพาะ 'ครึ่งหลัง' (Top 3 2H Scores)";
+            }
+
+            document.getElementById('res_home_title').innerText = `${home.name} (อันดับ ${homeData.rank})`;
+            document.getElementById('res_xg_home').innerText = xgHome.toFixed(2);
+            document.getElementById('res_home_motivation_text').innerText = home.motivText;
+
+            document.getElementById('res_away_title').innerText = `${away.name} (อันดับ ${awayData.rank})`;
+            document.getElementById('res_xg_away').innerText = xgAway.toFixed(2);
+            document.getElementById('res_away_motivation_text').innerText = away.motivText;
+
+            document.getElementById('prob_home_win').innerText = homeWinProb.toFixed(1) + '%';
+            document.getElementById('prob_draw').innerText = drawProb.toFixed(1) + '%';
+            document.getElementById('prob_away_win').innerText = awayWinProb.toFixed(1) + '%';
+
+            document.getElementById('prob_over').innerText = overProb.toFixed(1) + '%';
+            document.getElementById('prob_under').innerText = underProb.toFixed(1) + '%';
+
+            let leagueNameInput = document.getElementById('custom_league_input').value || "รายการแข่งขันนี้";
+            
+            if (currentMode === 'full') {
+                let ouText = overProb > underProb 
+                    ? `🔥 สถิติและแรงจูงใจในรายการ <strong>${leagueNameInput}</strong> ชี้ชัด คาดว่าสกอร์รวมจะจบ <strong class="text-emerald-400">"สูงกว่า 2.5 ประตู" (Over)</strong> (${overProb.toFixed(1)}%)` 
+                    : `🛡️ สถิติเกมรับและบริบทในรายการ <strong>${leagueNameInput}</strong> คาดว่าสกอร์รวมจะจบ <strong class="text-rose-400">"ต่ำกว่า 2.5 ประตู" (Under)</strong> (${underProb.toFixed(1)}%)`;
+                document.getElementById('ou_verdict').innerHTML = ouText;
+            } else {
+                let currentTotalHT = htHomeGoals + htAwayGoals;
+                let targetLine = currentTotalHT + 0.5;
+                let ouText = overProb > underProb 
+                    ? `🔥 จากสกอร์ครึ่งแรกที่ <strong>${htHomeGoals}-${htAwayGoals}</strong> รูปเกมครึ่งหลังน่าจะเปิดแลก คาดสกอร์รวมทะลุเรต <strong class="text-emerald-400">Over ${targetLine}</strong> (${overProb.toFixed(1)}%)` 
+                    : `🛡️ จากสกอร์ครึ่งแรกที่ <strong>${htHomeGoals}-${htAwayGoals}</strong> ครึ่งหลังเน้นรัดกุม คาดสกอร์รวมจบต่ำกว่า <strong class="text-rose-400">Under ${targetLine}</strong> (${underProb.toFixed(1)}%)`;
+                document.getElementById('ou_verdict').innerHTML = ouText;
+            }
+
+            let topScoresHtml = '';
+            for (let i = 0; i < 3; i++) {
+                let [scoreKey, prob] = sortedScores[i];
+                let [sh, sa] = scoreKey.split('-');
+                if (currentMode === 'ht') {
+                    let finalH = htHomeGoals + parseInt(sh);
+                    let finalA = htAwayGoals + parseInt(sa);
+                    topScoresHtml += `
+                        <div class="flex justify-between items-center bg-slate-900 px-4 py-2 rounded-lg text-sm">
+                            <span class="font-medium text-slate-300">อันดับ ${i+1}: ครึ่งหลังยิงเพิ่ม <strong class="text-sky-400">${sh}-${sa}</strong> (สกอร์รวมปัจจุบัน HT ${htHomeGoals}-${htAwayGoals} -> คาดจบสกอร์รวม <strong class="text-emerald-400">${finalH}-${finalA}</strong>)</span>
+                            <span class="text-sky-400 font-bold">${(prob * 100).toFixed(2)}%</span>
+                        </div>
+                    `;
+                } else {
+                    let totalGoals = parseInt(sh) + parseInt(sa);
+                    topScoresHtml += `
+                        <div class="flex justify-between items-center bg-slate-900 px-4 py-2 rounded-lg text-sm">
+                            <span class="font-medium text-slate-300">อันดับ ${i+1}: ${home.name} <strong class="text-emerald-400">${sh} - ${sa}</strong> ${away.name} <span class="text-xs text-slate-400">(รวม ${totalGoals} ประตู)</span></span>
+                            <span class="text-sky-400 font-bold">${(prob * 100).toFixed(2)}%</span>
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('top_scores_list').innerHTML = topScoresHtml;
+
+            let bestScore = sortedScores[0][0].split('-');
+            let bestSh = parseInt(bestScore[0]);
+            let bestSa = parseInt(bestScore[1]);
+
+            let finalSummary = "";
+            if (currentMode === 'full') {
+                let winnerText = homeWinProb > awayWinProb && homeWinProb > drawProb 
+                    ? `เจ้าบ้าน <strong class="text-sky-400">${home.name}</strong> มีโอกาสชนะสูงสุด (${homeWinProb.toFixed(1)}%)` 
+                    : (awayWinProb > homeWinProb && awayWinProb > drawProb ? `ทีมเยือน <strong class="text-rose-400">${away.name}</strong> บุกคว้าชัย (${awayWinProb.toFixed(1)}%)` : `ฟอร์มสูสี โอกาสออก <strong class="text-amber-400">"เสมอ"</strong> สูงสุด (${drawProb.toFixed(1)}%)`);
+                let totalBestGoals = bestSh + bestSa;
+                finalSummary = `${winnerText} | สกอร์เต็มเวลาที่คาด: <strong class="text-emerald-400">${home.name} ${bestSh} - ${bestSa} ${away.name}</strong> (รวม ${totalBestGoals} ประตู)`;
+            } else {
+                let finalH = htHomeGoals + bestSh;
+                let finalA = htAwayGoals + bestSa;
+                let htWinnerText = homeWinProb > awayWinProb && homeWinProb > drawProb 
+                    ? `ครึ่งหลังเจ้าบ้าน <strong class="text-sky-400">${home.name}</strong> มีโอกาสทำเกมได้ดีกว่า` 
+                    : (awayWinProb > homeWinProb && awayWinProb > drawProb ? `ครึ่งหลังทีมเยือน <strong class="text-rose-400">${away.name}</strong> มีโอกาสแก้เกมฮึดสู้` : `ครึ่งหลังรูปเกมสูสีใกล้เคียงกัน`);
+                finalSummary = `${htWinnerText} | สกอร์ครึ่งหลังคาดว่าจะยิงเพิ่ม ${bestSh}-${bestSa} | <strong class="text-emerald-400">คาดการณ์สกอร์รวมจบเกม: ${home.name} ${finalH} - ${finalA} ${away.name}</strong>`;
+            }
+
+            document.getElementById('final_verdict').innerHTML = finalSummary;
+
+            document.getElementById('result_section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.onload = initApp;
     </script>
 </body>
 </html>
