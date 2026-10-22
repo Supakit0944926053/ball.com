@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Football Analyzer - Full & Half-Time Edition</title>
+    <title>Pro Football Analyzer - Live Stats Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -14,8 +14,8 @@
     <div class="max-w-4xl mx-auto">
         <!-- หัวข้อแอป -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-emerald-400 mb-2">⚽ PRO FOOTBALL ANALYZER (FULL & HALF-TIME)</h1>
-            <p class="text-slate-400 text-sm md:text-base">ระบบวิเคราะห์ก่อนเกม และระบบวิเคราะห์เจาะลึกเฉพาะ "ครึ่งหลัง (Live HT Analyzer)" เมื่อเกมผ่านไปแล้ว 45 นาที</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-emerald-400 mb-2">⚽ PRO FOOTBALL ANALYZER (LIVE STATS EDITION)</h1>
+            <p class="text-slate-400 text-sm md:text-base">ระบบวิเคราะห์เต็มเวลา และระบบวิเคราะห์เจาะลึกครึ่งหลังโดยใช้สถิติสนามจริง (เตะมุม, โอกาสยิง, ครองบอล)</p>
         </div>
 
         <!-- แถบเลือกลีกหรือพิมพ์เอง -->
@@ -36,42 +36,72 @@
             </div>
         </div>
 
-        <!-- โหมดการวิเคราะห์ (Pre-Match / Live HT) -->
+        <!-- โหมดการวิเคราะห์ (Pre-Match / Live HT Stats) -->
         <div class="bg-slate-900 p-4 rounded-2xl shadow-xl border border-slate-800 mb-6 flex justify-center gap-4">
             <button id="btn_mode_full" onclick="switchMode('full')" class="bg-emerald-500 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-sm transition-all cursor-pointer shadow-md">
                 📊 วิเคราะห์เต็มเวลา (Pre-Match)
             </button>
             <button id="btn_mode_ht" onclick="switchMode('ht')" class="bg-slate-800 text-slate-300 hover:bg-slate-700 font-bold px-6 py-2.5 rounded-xl text-sm transition-all cursor-pointer">
-                ⏱️ วิเคราะห์ครึ่งหลังสดๆ (Live HT Analysis)
+                ⏱️ วิเคราะห์ครึ่งหลัง จากสถิติสนามจริง (Live HT Stats)
             </button>
         </div>
 
-        <!-- แผงกรอกสกอร์ครึ่งแรก (ซ่อนไว้โดยค่าเริ่มต้น) -->
-        <div id="ht_input_section" class="hidden bg-slate-900 p-6 rounded-2xl shadow-xl border border-sky-500/40 mb-6 space-y-4">
-            <h3 class="text-lg font-bold text-sky-400 flex items-center gap-2">
-                ⏱️ ผลสกอร์และสถานการณ์เมื่อจบครึ่งแรก (Half-Time Status)
+        <!-- แผงกรอกสถิติครึ่งแรก (ซ่อนไว้โดยค่าเริ่มต้น) -->
+        <div id="ht_input_section" class="hidden bg-slate-900 p-6 rounded-2xl shadow-xl border border-sky-500/40 mb-6 space-y-5">
+            <h3 class="text-lg font-bold text-sky-400 flex items-center gap-2 border-b border-slate-800 pb-3">
+                ⏱️ สถิติและสกอร์เมื่อจบครึ่งแรก (HT Real Match Stats)
             </h3>
+            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <label class="block text-sm text-sky-400 font-bold mb-2">ประตูเจ้าบ้าน ครึ่งแรก (HT Home Goals)</label>
-                    <select id="ht_home_goals" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white font-bold text-center">
-                        <option value="0" selected>0 ประตู</option>
-                        <option value="1">1 ประตู</option>
-                        <option value="2">2 ประตู</option>
-                        <option value="3">3 ประตูขึ้นไป</option>
-                    </select>
+                <!-- สถิติเจ้าบ้าน ครึ่งแรก -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <h4 class="font-bold text-sky-400 text-sm">🏠 สถิติครึ่งแรก: เจ้าบ้าน</h4>
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">ประตู (Goals)</label>
+                        <select id="ht_home_goals" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm font-bold">
+                            <option value="0" selected>0 ประตู</option>
+                            <option value="1">1 ประตู</option>
+                            <option value="2">2 ประตู</option>
+                            <option value="3">3 ประตูขึ้นไป</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs text-slate-300 mb-1">โอกาสยิง (Shots)</label>
+                            <input type="number" id="ht_home_shots" value="5" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center text-sm font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-300 mb-1">เตะมุม (Corners)</label>
+                            <input type="number" id="ht_home_corners" value="3" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center text-sm font-bold">
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <label class="block text-sm text-amber-400 font-bold mb-2">ประตูทีมเยือน ครึ่งแรก (HT Away Goals)</label>
-                    <select id="ht_away_goals" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white font-bold text-center">
-                        <option value="0" selected>0 ประตู</option>
-                        <option value="1">1 ประตู</option>
-                        <option value="2">2 ประตู</option>
-                        <option value="3">3 ประตูขึ้นไป</option>
-                    </select>
+
+                <!-- สถิติทีมเยือน ครึ่งแรก -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <h4 class="font-bold text-amber-400 text-sm">✈️ สถิติครึ่งแรก: ทีมเยือน</h4>
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">ประตู (Goals)</label>
+                        <select id="ht_away_goals" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm font-bold">
+                            <option value="0" selected>0 ประตู</option>
+                            <option value="1">1 ประตู</option>
+                            <option value="2">2 ประตู</option>
+                            <option value="3">3 ประตูขึ้นไป</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs text-slate-300 mb-1">โอกาสยิง (Shots)</label>
+                            <input type="number" id="ht_away_shots" value="4" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center text-sm font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-300 mb-1">เตะมุม (Corners)</label>
+                            <input type="number" id="ht_away_corners" value="2" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center text-sm font-bold">
+                        </div>
+                    </div>
                 </div>
             </div>
-            <p class="text-xs text-slate-400 text-center">*ระบบจะนำสกอร์ครึ่งแรกนี้ไปคำนวณโมเมนตัมแก้เกมและทำนายสกอร์เฉพาะใน "ครึ่งหลัง" ให้ทันที</p>
+            <p class="text-[11px] text-slate-400 text-center">*ระบบจะนำสถิติโอกาสยิงและเตะมุมในครึ่งแรกมาคำนวณน้ำหนักความดุดัน (Pressure Index) เพื่อทำนายสกอร์และเตะมุมครึ่งหลังให้ทันที</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -168,6 +198,12 @@
                 </div>
             </div>
 
+            <!-- เพิ่มกล่องแสดงการคาดการณ์เตะมุม (เฉพาะโหมด HT) -->
+            <div id="corner_prediction_box" class="hidden bg-slate-950 p-5 rounded-xl border border-sky-500/30 text-center space-y-1">
+                <h3 class="font-bold text-sky-300 text-sm">🚩 คาดการณ์ลูกเตะมุมครึ่งหลัง (Estimated 2H Corners)</h3>
+                <p id="corner_verdict_text" class="text-base font-bold text-emerald-400">-</p>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
                     <h3 class="font-bold text-slate-200 mb-3 text-center" id="ou_box_title">📈 วิเคราะห์สกอร์ สูง / ต่ำ (Over/Under 2.5)</h3>
@@ -216,7 +252,7 @@
     </div>
 
     <script>
-        let currentMode = 'full'; // 'full' หรือ 'ht'
+        let currentMode = 'full';
 
         const teamPresets = {
             "Manchester City": { rank: 1, results: ["W","W","W","D","W"], scored: [3, 2, 4, 1, 3], conceded: [1, 0, 1, 1, 0] },
@@ -411,25 +447,42 @@
             let xgHome = Math.min(3.8, Math.max(0.15, ((home.avgScored + away.avgConceded) / 2) * leagueMultiplier));
             let xgAway = Math.min(3.8, Math.max(0.15, ((away.avgScored + home.avgConceded) / 2) * leagueMultiplier));
 
-            let htHomeGoals = 0;
-            let htAwayGoals = 0;
+            let htHomeGoals = 0, htAwayGoals = 0;
+            let est2HCorners = 0;
 
-            // หากเลือกโหมดวิเคราะห์ครึ่งหลัง (Live HT) ให้ปรับลด xG เหลือครึ่งเดียว (0.5) และบวกสถานการณ์แก้เกม
             if (currentMode === 'ht') {
                 htHomeGoals = parseInt(document.getElementById('ht_home_goals').value);
                 htAwayGoals = parseInt(document.getElementById('ht_away_goals').value);
+                let homeShots = parseFloat(document.getElementById('ht_home_shots').value) || 0;
+                let awayShots = parseFloat(document.getElementById('ht_away_shots').value) || 0;
+                let homeCorners = parseFloat(document.getElementById('ht_home_corners').value) || 0;
+                let awayCorners = parseFloat(document.getElementById('ht_away_corners').value) || 0;
 
-                xgHome = xgHome * 0.52;
-                xgAway = xgAway * 0.52;
+                // วิเคราะห์ความดุดันจากโอกาสยิงและเตะมุมครึ่งแรก มาปรับ xG ครึ่งหลัง
+                let totalShotsHT = homeShots + awayShots;
+                let pressureMultiplierHome = totalShotsHT > 0 ? (homeShots / totalShotsHT) : 0.5;
+                let pressureMultiplierAway = totalShotsHT > 0 ? (awayShots / totalShotsHT) : 0.5;
 
-                // ทีมตามหลังจะโหมบุกหนักขึ้นในครึ่งหลัง (Tactical Adjustment)
+                xgHome = (xgHome * 0.45) + (pressureMultiplierHome * 1.5);
+                xgAway = (xgAway * 0.45) + (pressureMultiplierAway * 1.5);
+
+                // ปรับแก้ตามสกอร์ตามหลัง (Tactical Comeback Boost)
                 if (htHomeGoals < htAwayGoals) {
-                    xgHome *= 1.25; // เจ้าบ้านตามหลัง บุกแหลก
-                    xgAway *= 0.90; // ทีมเยือนนำ ผ่อนเกมรับแน่น
+                    xgHome *= 1.30;
+                    xgAway *= 0.85;
                 } else if (htAwayGoals < htHomeGoals) {
-                    xgAway *= 1.25; // ทีมเยือนตามหลัง บุกแหลก
-                    xgHome *= 0.90; // เจ้าบ้านนำ ผ่อนเกมรับแน่น
+                    xgAway *= 1.30;
+                    xgHome *= 0.85;
                 }
+
+                // คำนวณแนวโน้มเตะมุมครึ่งหลัง (อิงอัตราเตะมุมครึ่งแรก * 1.1)
+                let totalHFCorners = homeCorners + awayCorners;
+                est2HCorners = Math.round(totalHFCorners * 1.15);
+                
+                document.getElementById('corner_prediction_box').classList.remove('hidden');
+                document.getElementById('corner_verdict_text').innerText = `ครึ่งแรกเตะไป ${totalHFCorners} มุม | คาดว่าครึ่งหลังจะยิงเพิ่มประมาณ ${est2HCorners} มุม (รวมจบเกมประมาณ ${totalHFCorners + est2HCorners} มุม)`;
+            } else {
+                document.getElementById('corner_prediction_box').classList.add('hidden');
             }
 
             let scoreMatrix = {};
@@ -481,7 +534,6 @@
 
             document.getElementById('result_section').classList.remove('hidden');
 
-            // ปรับข้อความ UI ตามโหมด
             if (currentMode === 'full') {
                 document.getElementById('result_heading').innerText = "📊 ผลการวิเคราะห์และทำนายเกม (Full-Time)";
                 document.getElementById('xg_label_text').innerText = "ค่าคาดการณ์การทำประตู (xG):";
@@ -495,7 +547,7 @@
                 document.getElementById('res_away_win_label').innerText = "ทีมเยือนชนะ";
                 document.getElementById('top_scores_title').innerText = "🏆 สกอร์เจาะจงที่มีโอกาสเกิดมากที่สุด (Top 3 Scores - FT)";
             } else {
-                document.getElementById('result_heading').innerText = "⏱️ ผลการวิเคราะห์เฉพาะ 'ครึ่งหลัง' (Live 2nd Half Analysis)";
+                document.getElementById('result_heading').innerText = "⏱️ ผลการวิเคราะห์จากสถิติสนามจริง 'ครึ่งหลัง' (Live 2H Analysis)";
                 document.getElementById('xg_label_text').innerText = "xG เฉพาะครึ่งหลัง:";
                 document.getElementById('xg_label_text_2').innerText = "xG เฉพาะครึ่งหลัง:";
                 let currentTotalHT = htHomeGoals + htAwayGoals;
@@ -503,11 +555,11 @@
                 document.getElementById('ou_box_title').innerText = `📈 สูง / ต่ำ ครึ่งหลัง (Over/Under ${lineTarget} จากสกอร์รวม ${currentTotalHT})`;
                 document.getElementById('over_label_text').innerText = `สูงกว่า ${lineTarget} (Over)`;
                 document.getElementById('under_label_text').innerText = `ต่ำกว่า ${lineTarget} (Under)`;
-                document.getElementById('wdl_box_title').innerText = "🎯 ผลการแข่งขันเฉพาะครึ่งหลัง (2H Only W/D/L)";
-                document.getElementById('res_home_win_label').innerText = "เจ้าบ้านยิงครึ่งหลังมากกว่า";
-                document.getElementById('res_draw_label').innerText = "ครึ่งหลังยิงเท่ากัน";
-                document.getElementById('res_away_win_label').innerText = "ทีมเยือนยิงครึ่งหลังมากกว่า";
-                document.getElementById('top_scores_title').innerText = "🏆 สกอร์ที่คาดว่าจะเกิดขึ้นเฉพาะ 'ครึ่งหลัง' (Top 3 2H Scores)";
+                document.getElementById('wdl_box_title').innerText = "🎯 รูปเกมครึ่งหลังใครจะเหนือกว่า (2H Performance)";
+                document.getElementById('res_home_win_label').innerText = "เจ้าบ้านบุกดีกว่าครึ่งหลัง";
+                document.getElementById('res_draw_label').innerText = "ครึ่งหลังสูสีกัน";
+                document.getElementById('res_away_win_label').innerText = "ทีมเยือนบุกดีกว่าครึ่งหลัง";
+                document.getElementById('top_scores_title').innerText = "🏆 สกอร์ที่คาดว่าจะยิงเพิ่มเฉพาะ 'ครึ่งหลัง' (Top 3 2H Goals)";
             }
 
             document.getElementById('res_home_title').innerText = `${home.name} (อันดับ ${homeData.rank})`;
@@ -536,8 +588,8 @@
                 let currentTotalHT = htHomeGoals + htAwayGoals;
                 let targetLine = currentTotalHT + 0.5;
                 let ouText = overProb > underProb 
-                    ? `🔥 จากสกอร์ครึ่งแรกที่ <strong>${htHomeGoals}-${htAwayGoals}</strong> รูปเกมครึ่งหลังน่าจะเปิดแลก คาดสกอร์รวมทะลุเรต <strong class="text-emerald-400">Over ${targetLine}</strong> (${overProb.toFixed(1)}%)` 
-                    : `🛡️ จากสกอร์ครึ่งแรกที่ <strong>${htHomeGoals}-${htAwayGoals}</strong> ครึ่งหลังเน้นรัดกุม คาดสกอร์รวมจบต่ำกว่า <strong class="text-rose-400">Under ${targetLine}</strong> (${underProb.toFixed(1)}%)`;
+                    ? `🔥 จากสถิติโอกาสยิงครึ่งแรก คาดว่าครึ่งหลังจะเปิดหน้าแลกและยิงประตูเพิ่มทะลุเรต <strong class="text-emerald-400">Over ${targetLine}</strong> (${overProb.toFixed(1)}%)` 
+                    : `🛡️ จากสถิติครึ่งแรก รูปเกมค่อนข้างอึดอัด คาดสกอร์รวมครึ่งหลังจบต่ำกว่า <strong class="text-rose-400">Under ${targetLine}</strong> (${underProb.toFixed(1)}%)`;
                 document.getElementById('ou_verdict').innerHTML = ouText;
             }
 
@@ -550,7 +602,7 @@
                     let finalA = htAwayGoals + parseInt(sa);
                     topScoresHtml += `
                         <div class="flex justify-between items-center bg-slate-900 px-4 py-2 rounded-lg text-sm">
-                            <span class="font-medium text-slate-300">อันดับ ${i+1}: ครึ่งหลังยิงเพิ่ม <strong class="text-sky-400">${sh}-${sa}</strong> (สกอร์รวมปัจจุบัน HT ${htHomeGoals}-${htAwayGoals} -> คาดจบสกอร์รวม <strong class="text-emerald-400">${finalH}-${finalA}</strong>)</span>
+                            <span class="font-medium text-slate-300">อันดับ ${i+1}: ครึ่งหลังยิงเพิ่ม <strong class="text-sky-400">${sh}-${sa}</strong> (สกอร์ปัจจุบัน HT ${htHomeGoals}-${htAwayGoals} -> คาดจบสกอร์รวม <strong class="text-emerald-400">${finalH}-${finalA}</strong>)</span>
                             <span class="text-sky-400 font-bold">${(prob * 100).toFixed(2)}%</span>
                         </div>
                     `;
@@ -581,9 +633,9 @@
                 let finalH = htHomeGoals + bestSh;
                 let finalA = htAwayGoals + bestSa;
                 let htWinnerText = homeWinProb > awayWinProb && homeWinProb > drawProb 
-                    ? `ครึ่งหลังเจ้าบ้าน <strong class="text-sky-400">${home.name}</strong> มีโอกาสทำเกมได้ดีกว่า` 
-                    : (awayWinProb > homeWinProb && awayWinProb > drawProb ? `ครึ่งหลังทีมเยือน <strong class="text-rose-400">${away.name}</strong> มีโอกาสแก้เกมฮึดสู้` : `ครึ่งหลังรูปเกมสูสีใกล้เคียงกัน`);
-                finalSummary = `${htWinnerText} | สกอร์ครึ่งหลังคาดว่าจะยิงเพิ่ม ${bestSh}-${bestSa} | <strong class="text-emerald-400">คาดการณ์สกอร์รวมจบเกม: ${home.name} ${finalH} - ${finalA} ${away.name}</strong>`;
+                    ? `จากสถิติครึ่งแรก เจ้าบ้าน <strong class="text-sky-400">${home.name}</strong> ครองเกมบุกได้ดีกว่า` 
+                    : (awayWinProb > homeWinProb && awayWinProb > drawProb ? `จากสถิติครึ่งแรก ทีมเยือน <strong class="text-rose-400">${away.name}</strong> มีโอกาสสวนกลับและทำอันตรายได้ดีกว่า` : `ครึ่งแรกรูปเกมสูสีใกล้เคียงกันมาก`);
+                finalSummary = `${htWinnerText} | ครึ่งหลังคาดว่าจะยิงเพิ่ม ${bestSh}-${bestSa} | <strong class="text-emerald-400">คาดการณ์สกอร์รวมจบเกม: ${home.name} ${finalH} - ${finalA} ${away.name}</strong>`;
             }
 
             document.getElementById('final_verdict').innerHTML = finalSummary;
