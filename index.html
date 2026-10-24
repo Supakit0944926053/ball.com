@@ -11,11 +11,11 @@
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen py-10 px-4">
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-5xl mx-auto">
         <!-- หัวข้อแอป -->
         <div class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-emerald-400 mb-2">⚽ PRO FOOTBALL ANALYZER (PRO MASTER EDITION)</h1>
-            <p class="text-slate-400 text-sm md:text-base">ระบบวิเคราะห์เต็มเวลา + วิเคราะห์ครึ่งหลัง + ราคาบอลแฮนดิแคปและสูงต่ำแบบละเอียด</p>
+            <p class="text-slate-400 text-sm md:text-base">ระบบวิเคราะห์เต็มเวลา + ตารางเรตราคาโพยจริง (HT Over/Under Bug Fixed)</p>
         </div>
 
         <!-- แถบเลือกลีกหรือพิมพ์เอง -->
@@ -46,58 +46,35 @@
             </button>
         </div>
 
-        <!-- แผงกรอกราคาบอล ค่าน้ำ และราคาสูงต่ำ (Odds, Handicap & Flow) -->
+        <!-- แผงตารางกรอกเรตราคาแบบเพิ่ม-ลดแถวได้อิสระ -->
         <div class="bg-slate-900 p-6 rounded-2xl shadow-xl border border-indigo-500/40 mb-6 space-y-4">
-            <h3 class="text-lg font-bold text-indigo-400 flex items-center gap-2 border-b border-slate-800 pb-3">
-                💰 วิเคราะห์ราคาบอล แต้มต่อ และค่าน้ำ (Odds, Handicap & Over/Under)
-            </h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-3 gap-3">
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1">แต้มต่อ (Handicap)</label>
-                    <select id="match_handicap" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-sm font-bold">
-                        <option value="0">เสมอ (0.0)</option>
-                        <option value="0.25" selected>ป.ป. (0.25 / เสมอควบครึ่ง)</option>
-                        <option value="0.5">ครึ่งลูก (0.5)</option>
-                        <option value="0.75">ครึ่งควบลูก (0.75)</option>
-                        <option value="1.0">หนึ่งลูก (1.0)</option>
-                        <option value="1.25">ลูกควบลูกครึ่ง (1.25)</option>
-                        <option value="1.5">ลูกครึ่ง (1.5)</option>
-                        <option value="2.0">สองลูก (2.0)</option>
-                    </select>
+                    <h3 class="text-base font-bold text-indigo-400 flex items-center gap-2">
+                        📋 ตารางเรตราคาต่อรองและสูง-ต่ำ (Multi-Line Odds Matrix)
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5">เพิ่มเรตราคาตามหน้าโพยจริง เพื่อให้ระบบคำนวณหาเรตที่คุ้มค่าที่สุด</p>
                 </div>
-                <div>
-                    <label class="block text-xs text-slate-300 mb-1">ราคาสูง-ต่ำ (Over/Under Line)</label>
-                    <select id="match_ou_line" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-sm font-bold">
-                        <option value="2.0">2.0 ลูก</option>
-                        <option value="2.25">2/2.5 (2.25)</option>
-                        <option value="2.5" selected>2.5 ลูก (มาตรฐาน)</option>
-                        <option value="2.75">2.5/3 (2.75)</option>
-                        <option value="3.0">3.0 ลูก</option>
-                        <option value="3.5">3.5 ลูก</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs text-slate-300 mb-1">ทิศทางราคาไหล (Market Flow)</label>
-                    <select id="match_odds_flow" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-sm font-bold">
-                        <option value="normal" selected>ราคาปกติ / ทรงตัว</option>
-                        <option value="team1_flow">🔥 ราคาไหลต่อฝั่งเจ้าบ้าน (ตลาดมั่นใจเจ้าบ้าน)</option>
-                        <option value="team2_flow">⚡ ราคาไหลรองฝั่งทีมเยือน (ตลาดเทใจให้ทีมเยือน)</option>
-                    </select>
+                <button onclick="addOddsRow()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition-all cursor-pointer shadow-md flex items-center gap-1.5">
+                    ➕ เพิ่มเรตราคา
+                </button>
+            </div>
+
+            <!-- ส่วนหัวตาราง -->
+            <div class="overflow-x-auto">
+                <div class="min-w-[700px] space-y-2" id="odds_rows_container">
+                    <!-- แถวเรตราคาจะถูกสร้างด้วย JavaScript ด้านล่าง -->
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                <div>
-                    <label class="block text-xs text-sky-400 mb-1">ค่าน้ำฝั่งเจ้าบ้าน / ทีมต่อ (Home / Favorite Payout)</label>
-                    <input type="number" id="home_payout" value="0.95" step="0.01" min="0.70" max="1.30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-center text-sm font-bold" placeholder="เช่น 0.95">
-                </div>
-                <div>
-                    <label class="block text-xs text-amber-400 mb-1">ค่าน้ำฝั่งทีมเยือน / ทีมรอง (Away / Underdog Payout)</label>
-                    <input type="number" id="away_payout" value="0.90" step="0.01" min="0.70" max="1.30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-center text-sm font-bold" placeholder="เช่น 0.90">
-                </div>
+            <div class="pt-2">
+                <label class="block text-xs text-slate-300 mb-1">ทิศทางราคาไหลภาพรวม (Market Flow)</label>
+                <select id="match_odds_flow" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-xs font-bold">
+                    <option value="normal" selected>ราคาปกติ / ทรงตัว</option>
+                    <option value="team1_flow">🔥 ราคาไหลต่อฝั่งเจ้าบ้าน (ตลาดมั่นใจเจ้าบ้าน)</option>
+                    <option value="team2_flow">⚡ ราคาไหลรองฝั่งทีมเยือน (ตลาดเทใจให้ทีมเยือน)</option>
+                </select>
             </div>
-            <p class="text-[11px] text-slate-400">*ระบบจะนำเรตแต้มต่อ ราคาสูง-ต่ำ และค่าน้ำแยกฝั่งมาประมวลผลร่วมกับค่า xG เพื่อหาความคุ้มค่า (Value Bet)</p>
         </div>
 
         <!-- แผงกรอกสถิติครึ่งแรกและชื่อทีม (แสดงเฉพาะเมื่อเลือกโหมด HT) -->
@@ -112,15 +89,15 @@
                     <h4 class="font-bold text-sky-400 text-sm">🏠 ทีมเจ้าบ้าน (Home Team)</h4>
                     <div>
                         <label class="block text-xs text-slate-300 mb-1">ชื่อทีมเจ้าบ้าน</label>
-                        <input type="text" id="ht_home_name_input" value="Manchester City" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm font-bold">
+                        <input type="text" id="ht_home_name_input" value="ปอนเต เปรตา" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm font-bold">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-xs text-slate-300 mb-1">ประตู ครึ่งแรก</label>
                             <select id="ht_home_goals" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm font-bold">
-                                <option value="0" selected>0 ประตู</option>
+                                <option value="0">0 ประตู</option>
                                 <option value="1">1 ประตู</option>
-                                <option value="2">2 ประตู</option>
+                                <option value="2" selected>2 ประตู</option>
                                 <option value="3">3 ประตูขึ้นไป</option>
                             </select>
                         </div>
@@ -136,11 +113,11 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-xs text-slate-300 mb-1">โอกาสยิง (Shots)</label>
-                            <input type="number" id="ht_home_shots" value="5" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center text-sm font-bold">
+                            <input type="number" id="ht_home_shots" value="9" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center text-sm font-bold">
                         </div>
                         <div>
                             <label class="block text-xs text-slate-300 mb-1">เตะมุม (Corners)</label>
-                            <input type="number" id="ht_home_corners" value="3" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center text-sm font-bold">
+                            <input type="number" id="ht_home_corners" value="2" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center text-sm font-bold">
                         </div>
                     </div>
                 </div>
@@ -150,14 +127,14 @@
                     <h4 class="font-bold text-amber-400 text-sm">✈️ ทีมเยือน (Away Team)</h4>
                     <div>
                         <label class="block text-xs text-slate-300 mb-1">ชื่อทีมเยือน</label>
-                        <input type="text" id="ht_away_name_input" value="Real Madrid" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm font-bold">
+                        <input type="text" id="ht_away_name_input" value="ฟอร์ตาเลซา ซีอี" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm font-bold">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-xs text-slate-300 mb-1">ประตู ครึ่งแรก</label>
                             <select id="ht_away_goals" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm font-bold">
-                                <option value="0" selected>0 ประตู</option>
-                                <option value="1">1 ประตู</option>
+                                <option value="0">0 ประตู</option>
+                                <option value="1" selected>1 ประตู</option>
                                 <option value="2">2 ประตู</option>
                                 <option value="3">3 ประตูขึ้นไป</option>
                             </select>
@@ -174,11 +151,11 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-xs text-slate-300 mb-1">โอกาสยิง (Shots)</label>
-                            <input type="number" id="ht_away_shots" value="4" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center text-sm font-bold">
+                            <input type="number" id="ht_away_shots" value="6" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center text-sm font-bold">
                         </div>
                         <div>
                             <label class="block text-xs text-slate-300 mb-1">เตะมุม (Corners)</label>
-                            <input type="number" id="ht_away_corners" value="2" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center text-sm font-bold">
+                            <input type="number" id="ht_away_corners" value="0" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center text-sm font-bold">
                         </div>
                     </div>
                 </div>
@@ -198,7 +175,7 @@
                         <select id="select_home" onchange="onTeamSelect('home')" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-sky-500 mb-2">
                         </select>
                         <div class="grid grid-cols-3 gap-2">
-                            <input type="text" id="home_name" value="Manchester City" class="col-span-2 bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm">
+                            <input type="text" id="home_name" value="ปอนเต เปรตา" class="col-span-2 bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm font-bold">
                             <input type="number" id="home_rank" value="1" min="1" max="20" placeholder="อันดับ" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-center text-sky-400 font-bold text-sm" title="อันดับในตารางคะแนน">
                         </div>
                         <span class="text-[11px] text-slate-400 mt-1 block">*ช่องขวาสุดใส่ "อันดับปัจจุบัน" เพื่อคำนวณแรงจูงใจ</span>
@@ -232,7 +209,7 @@
                         <select id="select_away" onchange="onTeamSelect('away')" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-sky-500 mb-2">
                         </select>
                         <div class="grid grid-cols-3 gap-2">
-                            <input type="text" id="away_name" value="Real Madrid" class="col-span-2 bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm">
+                            <input type="text" id="away_name" value="ฟอร์ตาเลซา ซีอี" class="col-span-2 bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm font-bold">
                             <input type="number" id="away_rank" value="4" min="1" max="20" placeholder="อันดับ" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-center text-amber-400 font-bold text-sm" title="อันดับในตารางคะแนน">
                         </div>
                         <span class="text-[11px] text-slate-400 mt-1 block">*ช่องขวาสุดใส่ "อันดับปัจจุบัน" เพื่อคำนวณแรงจูงใจ</span>
@@ -288,7 +265,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
-                    <h3 class="font-bold text-slate-200 mb-3 text-center" id="ou_box_title">📈 วิเคราะห์สกอร์ สูง / ต่ำ (Over/Under)</h3>
+                    <h3 class="font-bold text-slate-200 mb-3 text-center" id="ou_box_title">📈 สูง / ต่ำ (Over/Under)</h3>
                     <div class="grid grid-cols-2 gap-3 text-center my-auto">
                         <div class="bg-slate-900 p-3 rounded-lg border border-emerald-500/20">
                             <span class="block text-xs text-slate-400" id="over_label_text">สูง (Over)</span>
@@ -321,9 +298,9 @@
                 </div>
             </div>
 
-            <!-- กล่องวิเคราะห์แฮนดิแคปและเรตราคา -->
+            <!-- กล่องวิเคราะห์แฮนดิแคปและเรตราคาที่ดีที่สุดจากตาราง -->
             <div class="bg-slate-950 p-5 rounded-xl border border-indigo-500/30 space-y-2">
-                <h3 class="font-bold text-indigo-300 text-sm text-center">💰 วิเคราะห์ราคาแฮนดิแคปและค่าน้ำคุ้มค่า (Handicap & Value Odds)</h3>
+                <h3 class="font-bold text-indigo-300 text-sm text-center">💰 ผลสแกนเรตราคาคุ้มค่าที่สุด (Best Value Edge Scan)</h3>
                 <p id="handicap_verdict_text" class="text-sm text-slate-200 font-medium text-center">-</p>
             </div>
 
@@ -333,7 +310,7 @@
             </div>
 
             <div class="bg-emerald-950/40 border border-emerald-500/50 p-5 rounded-xl text-center space-y-2">
-                <h3 class="text-lg font-bold text-emerald-300">🔮 บทสรุปฟันธงฉบับโปรมาสเตอร์ (พร้อมวิเคราะห์ราคาบอล)</h3>
+                <h3 class="text-lg font-bold text-emerald-300">🔮 บทสรุปฟันธงฉบับโปรมาสเตอร์ (พร้อมวิเคราะห์เรตราคาโพย)</h3>
                 <p id="final_verdict" class="text-base text-slate-100 font-medium">-</p>
             </div>
         </div>
@@ -343,16 +320,10 @@
         let currentMode = 'full';
 
         const teamPresets = {
-            "Manchester City": { rank: 1, results: ["W","W","W","D","W"], scored: [3, 2, 4, 1, 3], conceded: [1, 0, 1, 1, 0] },
-            "Arsenal": { rank: 2, results: ["W","W","D","W","W"], scored: [2, 3, 1, 4, 2], conceded: [0, 1, 1, 0, 1] },
-            "Liverpool": { rank: 3, results: ["W","D","W","W","W"], scored: [3, 1, 2, 4, 2], conceded: [0, 1, 0, 1, 0] },
-            "Real Madrid": { rank: 1, results: ["W","W","D","W","L"], scored: [2, 3, 1, 2, 1], conceded: [1, 0, 1, 1, 2] },
-            "Barcelona": { rank: 2, results: ["W","L","W","W","D"], scored: [3, 0, 4, 2, 1], conceded: [1, 2, 0, 1, 1] },
-            "Bayern Munich": { rank: 1, results: ["W","W","W","D","W"], scored: [4, 3, 2, 2, 5], conceded: [0, 1, 1, 2, 0] },
-            "Inter Milan": { rank: 1, results: ["W","D","W","W","L"], scored: [2, 1, 3, 2, 0], conceded: [0, 1, 0, 1, 1] },
-            "Paris Saint-Germain": { rank: 1, results: ["W","W","D","W","W"], scored: [3, 2, 2, 4, 3], conceded: [1, 1, 2, 0, 1] },
-            "Manchester United": { rank: 8, results: ["W","D","L","W","D"], scored: [2, 1, 0, 3, 1], conceded: [1, 1, 2, 0, 1] },
-            "Chelsea": { rank: 6, results: ["D","W","L","W","D"], scored: [1, 2, 0, 3, 1], conceded: [1, 0, 2, 1, 1] }
+            "ปอนเต เปรตา": { rank: 5, results: ["W","D","W","W","L"], scored: [2, 1, 2, 3, 1], conceded: [1, 1, 0, 1, 2] },
+            "ฟอร์ตาเลซา ซีอี": { rank: 6, results: ["D","W","L","W","D"], scored: [1, 2, 0, 2, 1], conceded: [1, 0, 2, 1, 1] },
+            "เวลลิงตัน ฟีนิกซ์": { rank: 1, results: ["W","W","W","D","W"], scored: [3, 2, 4, 1, 3], conceded: [1, 0, 1, 1, 0] },
+            "เซ็นทรัล โคสต์ มาริเนอร์ส": { rank: 3, results: ["W","W","D","W","L"], scored: [2, 3, 1, 2, 1], conceded: [1, 0, 1, 1, 2] }
         };
 
         function initApp() {
@@ -366,11 +337,75 @@
             homeSelect.innerHTML = options;
             awaySelect.innerHTML = options;
 
-            homeSelect.value = "Manchester City";
-            awaySelect.value = "Real Madrid";
+            homeSelect.value = "ปอนเต เปรตา";
+            awaySelect.value = "ฟอร์ตาเลซา ซีอี";
 
-            loadTeamPreset('home', "Manchester City");
-            loadTeamPreset('away', "Real Madrid");
+            loadTeamPreset('home', "ปอนเต เปรตา");
+            loadTeamPreset('away', "ฟอร์ตาเลซา ซีอี");
+
+            // สร้างแถวเรตราคาเริ่มต้น
+            addOddsRow(0.75, 1.85, 2.05, 4.25, 1.95, 1.95);
+        }
+
+        function addOddsRow(hVal = 0.75, hHome = 1.85, hAway = 2.05, ouVal = 4.25, oPayout = 1.95, uPayout = 1.95) {
+            const container = document.getElementById('odds_rows_container');
+            const rowId = 'odds_row_' + Date.now() + Math.random().toString(36).substr(2, 5);
+            
+            const rowHtml = `
+                <div id="${rowId}" class="grid grid-cols-1 md:grid-cols-12 gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800 items-center">
+                    <div class="md:col-span-3">
+                        <label class="block text-[10px] text-slate-400 mb-1">แต้มต่อ (Handicap)</label>
+                        <select class="row-h-val w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-white text-xs font-bold">
+                            <option value="0" ${hVal === 0 ? 'selected' : ''}>เสมอ (0.0)</option>
+                            <option value="0.25" ${hVal === 0.25 ? 'selected' : ''}>ป.ป. (0.25)</option>
+                            <option value="0.5" ${hVal === 0.5 ? 'selected' : ''}>ครึ่งลูก (0.5)</option>
+                            <option value="0.75" ${hVal === 0.75 ? 'selected' : ''}>ครึ่งควบ (0.75)</option>
+                            <option value="1.0" ${hVal === 1.0 ? 'selected' : ''}>หนึ่งลูก (1.0)</option>
+                            <option value="1.25" ${hVal === 1.25 ? 'selected' : ''}>ลูกควบ (1.25)</option>
+                            <option value="1.5" ${hVal === 1.5 ? 'selected' : ''}>ลูกครึ่ง (1.5)</option>
+                            <option value="2.0" ${hVal === 2.0 ? 'selected' : ''}>สองลูก (2.0)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[10px] text-sky-400 mb-1">น้ำต่อ</label>
+                        <input type="number" class="row-h-home w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-white text-center text-xs font-bold" value="${hHome}" step="0.01">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[10px] text-amber-400 mb-1">น้ำรอง</label>
+                        <input type="number" class="row-h-away w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-white text-center text-xs font-bold" value="${hAway}" step="0.01">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[10px] text-slate-400 mb-1">สูง-ต่ำ (O/U)</label>
+                        <select class="row-ou-val w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-white text-xs font-bold">
+                            <option value="2.0" ${ouVal === 2.0 ? 'selected' : ''}>2.0 ลูก</option>
+                            <option value="2.25" ${ouVal === 2.25 ? 'selected' : ''}>2/2.5 (2.25)</option>
+                            <option value="2.5" ${ouVal === 2.5 ? 'selected' : ''}>2.5 ลูก</option>
+                            <option value="2.75" ${ouVal === 2.75 ? 'selected' : ''}>2.5/3 (2.75)</option>
+                            <option value="3.0" ${ouVal === 3.0 ? 'selected' : ''}>3.0 ลูก</option>
+                            <option value="3.25" ${ouVal === 3.25 ? 'selected' : ''}>3/3.5 (3.25)</option>
+                            <option value="3.5" ${ouVal === 3.5 ? 'selected' : ''}>3.5 ลูก</option>
+                            <option value="3.75" ${ouVal === 3.75 ? 'selected' : ''}>3.5/4 (3.75)</option>
+                            <option value="4.0" ${ouVal === 4.0 ? 'selected' : ''}>4.0 ลูก</option>
+                            <option value="4.25" ${ouVal === 4.25 ? 'selected' : ''}>4/4.5 (4.25)</option>
+                            <option value="4.5" ${ouVal === 4.5 ? 'selected' : ''}>4.5 ลูก</option>
+                            <option value="4.75" ${ouVal === 4.75 ? 'selected' : ''}>4.5/5 (4.75)</option>
+                            <option value="5.0" ${ouVal === 5.0 ? 'selected' : ''}>5.0 ลูก</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-[10px] text-emerald-400 mb-1">น้ำสูง</label>
+                        <input type="number" class="row-ou-over w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-white text-center text-xs font-bold" value="${oPayout}" step="0.01">
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-[10px] text-rose-400 mb-1">น้ำต่ำ</label>
+                        <input type="number" class="row-ou-under w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-white text-center text-xs font-bold" value="${uPayout}" step="0.01">
+                    </div>
+                    <div class="md:col-span-1 flex items-end justify-center pt-4 md:pt-0">
+                        <button onclick="document.getElementById('${rowId}').remove()" class="bg-rose-900/50 hover:bg-rose-700 text-rose-300 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer w-full md:w-auto" title="ลบเรตนี้">❌</button>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', rowHtml);
         }
 
         function switchMode(mode) {
@@ -520,27 +555,16 @@
         function runAnalysis() {
             const leagueKey = document.getElementById('select_league_dropdown').value;
             const leagueMultipliers = {
-                "epl": 1.12,
-                "championship": 1.04,
-                "laliga": 0.94,
-                "bundesliga": 1.20,
-                "seriea": 0.90,
-                "ligue1": 0.98,
-                "ucl": 1.10,
-                "other": 1.05
+                "epl": 1.12, "championship": 1.04, "laliga": 0.94, "bundesliga": 1.20,
+                "seriea": 0.90, "ligue1": 0.98, "ucl": 1.10, "other": 1.05
             };
             let leagueMultiplier = leagueMultipliers[leagueKey] || 1.0;
-
-            const handicapVal = parseFloat(document.getElementById('match_handicap').value);
-            const ouLineVal = parseFloat(document.getElementById('match_ou_line').value);
             const oddsFlow = document.getElementById('match_odds_flow').value;
-            const homePayout = parseFloat(document.getElementById('home_payout').value) || 0.95;
-            const awayPayout = parseFloat(document.getElementById('away_payout').value) || 0.90;
 
-            let homeName = "Manchester City";
-            let awayName = "Real Madrid";
-            let xgHome = 1.6;
-            let xgAway = 1.3;
+            let homeName = "ปอนเต เปรตา";
+            let awayName = "ฟอร์ตาเลซา ซีอี";
+            let xgHome = 1.2;
+            let xgAway = 0.8;
             let htHomeGoals = 0, htAwayGoals = 0;
             let est2HCorners = 0;
             let homeRed = 0, awayRed = 0;
@@ -557,11 +581,9 @@
                 xgAway = Math.min(3.8, Math.max(0.15, ((away.avgScored + home.avgConceded) / 2) * leagueMultiplier));
 
                 if (oddsFlow === 'team1_flow') {
-                    xgHome *= 1.12;
-                    xgAway *= 0.92;
+                    xgHome *= 1.12; xgAway *= 0.92;
                 } else if (oddsFlow === 'team2_flow') {
-                    xgAway *= 1.12;
-                    xgHome *= 0.92;
+                    xgAway *= 1.12; xgHome *= 0.92;
                 }
 
                 document.getElementById('res_home_motivation_text').innerHTML = home.motivText;
@@ -586,56 +608,38 @@
                 xgHome = Math.max(0.2, 1.25 * pressureMultiplierHome * 1.6);
                 xgAway = Math.max(0.2, 1.25 * pressureMultiplierAway * 1.6);
 
-                if (homeRed > 0) {
-                    xgHome *= Math.pow(0.60, homeRed);
-                    xgAway *= Math.pow(1.40, homeRed);
-                }
-                if (awayRed > 0) {
-                    xgAway *= Math.pow(0.60, awayRed);
-                    xgHome *= Math.pow(1.40, awayRed);
-                }
-
-                if (htHomeGoals < htAwayGoals && homeRed === 0) {
-                    xgHome *= 1.35;
-                    xgAway *= 0.80;
-                } else if (htAwayGoals < htHomeGoals && awayRed === 0) {
-                    xgAway *= 1.35;
-                    xgHome *= 0.80;
-                }
+                if (homeRed > 0) { xgHome *= Math.pow(0.60, homeRed); xgAway *= Math.pow(1.40, homeRed); }
+                if (awayRed > 0) { xgAway *= Math.pow(0.60, awayRed); xgHome *= Math.pow(1.40, awayRed); }
 
                 let totalHFCorners = homeCorners + awayCorners;
                 est2HCorners = Math.round(totalHFCorners * 1.18);
                 
                 document.getElementById('corner_prediction_box').classList.remove('hidden');
-                document.getElementById('corner_verdict_text').innerText = `ครึ่งแรกเตะไป ${totalHFCorners} มุม | คาดว่าครึ่งหลังจะยิงเพิ่มประมาณ ${est2HCorners} มุม (รวมจบเกมประมาณ ${totalHFCorners + est2HCorners} มุม)`;
-
-                document.getElementById('res_home_motivation_text').innerHTML = `⏱️ สถิติครึ่งแรก ${homeName}: ยิง ${homeShots} ครั้ง | เตะมุม ${homeCorners} ครั้ง`;
-                document.getElementById('res_away_motivation_text').innerHTML = `⏱️ สถิติครึ่งแรก ${awayName}: ยิง ${awayShots} ครั้ง | เตะมุม ${awayCorners} ครั้ง`;
+                document.getElementById('corner_verdict_text').innerText = `ครึ่งแรกเตะไป ${totalHFCorners} มุม | คาดว่าครึ่งหลังจะยิงเพิ่มประมาณ ${est2HCorners} มุม`;
             }
 
+            // คำนวณเมทริกซ์สกอร์เฉพาะครึ่งหลัง
             let scoreMatrix = {};
             let totalProbSum = 0;
 
             for (let h = 0; h <= 6; h++) {
                 for (let a = 0; a <= 6; a++) {
                     let prob = poissonProbability(xgHome, h) * poissonProbability(xgAway, a);
-                    
-                    if (h === 0 && a === 0) prob *= (1 - (xgHome * xgAway * 0.15));
-                    else if (h === 1 && a === 0) prob *= 1.10;
-                    else if (h === 0 && a === 1) prob *= 1.10;
-                    else if (h === 1 && a === 1) prob *= (1 + (xgHome * xgAway * 0.09));
-
                     scoreMatrix[`${h}-${a}`] = Math.max(0, prob);
                     totalProbSum += scoreMatrix[`${h}-${a}`];
                 }
             }
-
-            for (let key in scoreMatrix) {
-                scoreMatrix[key] /= totalProbSum;
-            }
+            for (let key in scoreMatrix) { scoreMatrix[key] /= totalProbSum; }
 
             let homeWinProb = 0, drawProb = 0, awayWinProb = 0;
-            let overProb = 0, underProb = 0;
+            let overProbCumulative = 0, underProbCumulative = 0;
+
+            // ดึงเรตสูงต่ำหลักจากตารางแถวแรกมาใช้เป็นเกณฑ์สะสม
+            let firstRowOu = 2.5;
+            const firstRowElement = document.querySelector('#odds_rows_container > div');
+            if (firstRowElement) {
+                firstRowOu = parseFloat(firstRowElement.querySelector('.row-ou-val').value) || 2.5;
+            }
 
             for (let h = 0; h <= 6; h++) {
                 for (let a = 0; a <= 6; a++) {
@@ -644,55 +648,21 @@
                     else if (h === a) drawProb += p;
                     else awayWinProb += p;
 
-                    let totalMatchGoals = currentMode === 'ht' ? (htHomeGoals + htAwayGoals + h + a) : (h + a);
-                    let targetLine = currentMode === 'ht' ? (htHomeGoals + htAwayGoals + 0.5) : ouLineVal;
-
-                    if (totalMatchGoals > targetLine) overProb += p;
-                    else underProb += p;
+                    // คำนวณสกอร์รวมสะสม (ประตูครึ่งแรก + ประตูที่คาดว่าจะยิงเพิ่มครึ่งหลัง)
+                    let totalMatchGoals = (currentMode === 'ht' ? (htHomeGoals + htAwayGoals) : 0) + h + a;
+                    if (totalMatchGoals > firstRowOu) overProbCumulative += p;
+                    else underProbCumulative += p;
                 }
             }
 
-            homeWinProb *= 100;
-            drawProb *= 100;
-            awayWinProb *= 100;
-            overProb *= 100;
-            underProb *= 100;
+            homeWinProb *= 100; drawProb *= 100; awayWinProb *= 100;
+            overProbCumulative *= 100; underProbCumulative *= 100;
 
             let sortedScores = Object.entries(scoreMatrix).sort((a, b) => b[1] - a[1]);
-
             document.getElementById('result_section').classList.remove('hidden');
-
-            if (currentMode === 'full') {
-                document.getElementById('result_heading').innerText = "📊 ผลการวิเคราะห์และทำนายเกม (Full-Time)";
-                document.getElementById('xg_label_text').innerText = "ค่าคาดการณ์การทำประตู (xG):";
-                document.getElementById('xg_label_text_2').innerText = "ค่าคาดการณ์การทำประตู (xG):";
-                document.getElementById('ou_box_title').innerText = `📈 สูง / ต่ำ (Over/Under ${ouLineVal})`;
-                document.getElementById('over_label_text').innerText = `สูงกว่า ${ouLineVal} (Over)`;
-                document.getElementById('under_label_text').innerText = `ต่ำกว่า ${ouLineVal} (Under)`;
-                document.getElementById('wdl_box_title').innerText = "🎯 โอกาสผลการแข่งขัน (Win/Draw/Loss)";
-                document.getElementById('res_home_win_label').innerText = `${homeName} ชนะ`;
-                document.getElementById('res_draw_label').innerText = "เสมอ";
-                document.getElementById('res_away_win_label').innerText = `${awayName} ชนะ`;
-                document.getElementById('top_scores_title').innerText = "🏆 สกอร์เจาะจงที่มีโอกาสเกิดมากที่สุด (Top 3 Scores - FT)";
-            } else {
-                document.getElementById('result_heading').innerText = "⏱️ ผลการวิเคราะห์จากสถิติสนามจริง 'ครึ่งหลัง' (Live 2H Analysis)";
-                document.getElementById('xg_label_text').innerText = "xG เฉพาะครึ่งหลัง:";
-                document.getElementById('xg_label_text_2').innerText = "xG เฉพาะครึ่งหลัง:";
-                let currentTotalHT = htHomeGoals + htAwayGoals;
-                let lineTarget = currentTotalHT + 0.5;
-                document.getElementById('ou_box_title').innerText = `📈 สูง / ต่ำ ครึ่งหลัง (Over/Under ${lineTarget} จากสกอร์รวม ${currentTotalHT})`;
-                document.getElementById('over_label_text').innerText = `สูงกว่า ${lineTarget} (Over)`;
-                document.getElementById('under_label_text').innerText = `ต่ำกว่า ${lineTarget} (Under)`;
-                document.getElementById('wdl_box_title').innerText = "🎯 รูปเกมครึ่งหลังใครจะเหนือกว่า (2H Performance)";
-                document.getElementById('res_home_win_label').innerText = `${homeName} บุกดีกว่าครึ่งหลัง`;
-                document.getElementById('res_draw_label').innerText = "ครึ่งหลังสูสีกัน";
-                document.getElementById('res_away_win_label').innerText = `${awayName} บุกดีกว่าครึ่งหลัง`;
-                document.getElementById('top_scores_title').innerText = "🏆 สกอร์ที่คาดว่าจะยิงเพิ่มเฉพาะ 'ครึ่งหลัง' (Top 3 2H Goals)";
-            }
 
             document.getElementById('res_home_title').innerText = homeName;
             document.getElementById('res_xg_home').innerText = xgHome.toFixed(2);
-
             document.getElementById('res_away_title').innerText = awayName;
             document.getElementById('res_xg_away').innerText = xgAway.toFixed(2);
 
@@ -700,87 +670,79 @@
             document.getElementById('prob_draw').innerText = drawProb.toFixed(1) + '%';
             document.getElementById('prob_away_win').innerText = awayWinProb.toFixed(1) + '%';
 
-            document.getElementById('prob_over').innerText = overProb.toFixed(1) + '%';
-            document.getElementById('prob_under').innerText = underProb.toFixed(1) + '%';
+            document.getElementById('prob_over').innerText = overProbCumulative.toFixed(1) + '%';
+            document.getElementById('prob_under').innerText = underProbCumulative.toFixed(1) + '%';
 
+            // ดึงสกอร์อันดับ 1 ของครึ่งหลัง มาบวกกับประตูครึ่งแรกเพื่อแสดงผลลัพธ์สะสมที่ถูกต้อง
+            let bestScore = sortedScores[0][0].split('-');
+            let bestSh = parseInt(bestScore[0]);
+            let bestSa = parseInt(bestScore[1]);
+            let finalHomeGoals = (currentMode === 'ht' ? htHomeGoals : 0) + bestSh;
+            let finalAwayGoals = (currentMode === 'ht' ? htAwayGoals : 0) + bestSa;
+            let predictedTotalGoals = finalHomeGoals + finalAwayGoals;
+
+            // ประมวลผลตารางเรตราคาหลายเรตเพื่อหา Value Bet และคำแนะนำที่สอดคล้อง
+            const rowElements = document.querySelectorAll('#odds_rows_container > div');
+            let bestRecommendation = "";
+            let bestScoreDiff = 999;
             let xgDiff = xgHome - xgAway;
-            let handicapVerdict = "";
-            let recommendedPick = "";
 
-            if (xgDiff >= handicapVal + 0.3) {
-                handicapVerdict = `💡 วิเคราะห์ราคาเรตต่อ <strong>${handicapVal}</strong> (ค่าน้ำฝั่งต่อ ${homePayout}): xG ของ <span class="text-sky-400">${homeName}</span> เหนือกว่า คาดว่าจะยิงชนะขาดลอย <strong class="text-emerald-400">น่าเชียร์ฝั่ง "ต่อ" (${homeName})</strong>`;
-                recommendedPick = `ต่อ ${homeName} (${handicapVal} | น้ำ ${homePayout})`;
-            } else if (xgDiff <= -0.2) {
-                handicapVerdict = `💡 วิเคราะห์ราคาเรตต่อ <strong>${handicapVal}</strong> (ค่าน้ำฝั่งรอง ${awayPayout}): เรตนี้เปิดมาแพงเกินฟอร์ม ฝั่ง <span class="text-amber-400">${awayName}</span> สู้ได้ดี มีโอกาสยันเสมอหรือกินเต็ม <strong class="text-emerald-400">น่าเชียร์ฝั่ง "รอง" (${awayName})</strong>`;
-                recommendedPick = `รอง ${awayName} (+${handicapVal} | น้ำ ${awayPayout})`;
-            } else {
-                handicapVerdict = `💡 วิเคราะห์ราคาเรตต่อ <strong>${handicapVal}</strong>: โอกาสออกหน้าเบียดหรือเสมอกันสูงมาก <strong class="text-amber-400">แนะนำถือหางฝั่งทีมรองรับน้ำนิ่งๆ หรือลุ้นสกอร์ต่ำปลอดภัยกว่า</strong>`;
-                recommendedPick = `รอง ${awayName} หรือต่ำ ${ouLineVal}`;
+            rowElements.forEach((row, idx) => {
+                let hVal = parseFloat(row.querySelector('.row-h-val').value);
+                let hHome = parseFloat(row.querySelector('.row-h-home').value) || 0.90;
+                let hAway = parseFloat(row.querySelector('.row-h-away').value) || 0.90;
+                let ouVal = parseFloat(row.querySelector('.row-ou-val').value);
+                let oPayout = parseFloat(row.querySelector('.row-ou-over').value) || 0.90;
+                let uPayout = parseFloat(row.querySelector('.row-ou-under').value) || 0.90;
+
+                let diff = Math.abs(xgDiff - hVal);
+                if (diff < bestScoreDiff) {
+                    bestScoreDiff = diff;
+                    
+                    let handicapAdvice = xgDiff >= hVal + 0.25 ? `แนะนำต่อ <strong class="text-sky-400">"${homeName}"</strong> (${hVal})` : `แนะนำรอง <strong class="text-amber-400">"${awayName}"</strong> (+${hVal})`;
+                    
+                    // ระบบตรวจสอบความสมเหตุสมผล: หากสกอร์รวมสะสมทะลุเรตสูงต่ำ ห้ามแนะนำต่ำเด็ดขาด!
+                    let ouAdvice = "";
+                    if (predictedTotalGoals > ouVal) {
+                        ouAdvice = `และจัด <strong class="text-emerald-400">"สูง" (Over ${ouVal})</strong> ทันทีเพราะสกอร์รวมสะสมทะลุเรต`;
+                    } else if (predictedTotalGoals < ouVal) {
+                        ouAdvice = `และลุ้น <strong class="text-rose-400">"ต่ำ" (Under ${ouVal})</strong>`;
+                    } else {
+                        ouAdvice = `ลุ้นสูงต่ำตามเรต ${ouVal}`;
+                    }
+
+                    bestRecommendation = `🔥 แถวที่ ${idx+1} [เรตต่อ ${hVal} | สูงต่ำ ${ouVal}]: ${handicapAdvice} ${ouAdvice}`;
+                }
+            });
+
+            if (rowElements.length === 0) {
+                bestRecommendation = `💡 ยังไม่ได้เพิ่มเรตราคาในตาราง กรุณากดปุ่ม "+ เพิ่มเรตราคา" ด้านบน`;
             }
-            document.getElementById('handicap_verdict_text').innerHTML = handicapVerdict;
 
-            let leagueNameInput = document.getElementById('custom_league_input').value || "รายการแข่งขันนี้";
+            document.getElementById('handicap_verdict_text').innerHTML = bestRecommendation;
             
-            if (currentMode === 'full') {
-                let ouText = overProb > underProb 
-                    ? `🔥 อิงจากเรต สูง-ต่ำ <strong>${ouLineVal}</strong> คาดว่าสกอร์รวมจะจบ <strong class="text-emerald-400">"สูง" (Over)</strong> โอกาสสูงถึง (${overProb.toFixed(1)}%)` 
-                    : `🛡️ อิงจากเรต สูง-ต่ำ <strong>${ouLineVal}</strong> คาดว่าเกมจะอึดอัด จบ <strong class="text-rose-400">"ต่ำ" (Under)</strong> โอกาสสูงถึง (${underProb.toFixed(1)}%)`;
-                document.getElementById('ou_verdict').innerHTML = ouText;
-            } else {
-                let currentTotalHT = htHomeGoals + htAwayGoals;
-                let targetLine = currentTotalHT + 0.5;
-                let ouText = overProb > underProb 
-                    ? `🔥 จากรูปเกมครึ่งแรก คาดว่าครึ่งหลังจะยิงเพิ่มทะลุเรต <strong class="text-emerald-400">Over ${targetLine}</strong> (${overProb.toFixed(1)}%)` 
-                    : `🛡️ จากรูปเกมครึ่งแรก ครึ่งหลังน่าจะระวังตัว คาดสกอร์รวมจบต่ำกว่า <strong class="text-rose-400">Under ${targetLine}</strong> (${underProb.toFixed(1)}%)`;
-                document.getElementById('ou_verdict').innerHTML = ouText;
-            }
+            let ouVerdictText = overProbCumulative > underProbCumulative 
+                ? `🔥 สกอร์รวมสะสมมีโอกาสทะลุสูง จบ <strong class="text-emerald-400">"สูง" (Over)</strong> (${overProbCumulative.toFixed(1)}%)` 
+                : `🛡️ แนวโน้มเกมรัดกุม โอกาสจบ <strong class="text-rose-400">"ต่ำ" (Under)</strong> (${underProbCumulative.toFixed(1)}%)`;
+            document.getElementById('ou_verdict').innerHTML = ouVerdictText;
 
             let topScoresHtml = '';
             for (let i = 0; i < 3; i++) {
                 let [scoreKey, prob] = sortedScores[i];
                 let [sh, sa] = scoreKey.split('-');
-                if (currentMode === 'ht') {
-                    let finalH = htHomeGoals + parseInt(sh);
-                    let finalA = htAwayGoals + parseInt(sa);
-                    topScoresHtml += `
-                        <div class="flex justify-between items-center bg-slate-900 px-4 py-2 rounded-lg text-sm">
-                            <span class="font-medium text-slate-300">อันดับ ${i+1}: ครึ่งหลังยิงเพิ่ม <strong class="text-sky-400">${sh}-${sa}</strong> (สกอร์ปัจจุบัน HT ${htHomeGoals}-${htAwayGoals} -> คาดจบสกอร์รวม <strong class="text-emerald-400">${finalH}-${finalA}</strong>)</span>
-                            <span class="text-sky-400 font-bold">${(prob * 100).toFixed(2)}%</span>
-                        </div>
-                    `;
-                } else {
-                    let totalGoals = parseInt(sh) + parseInt(sa);
-                    topScoresHtml += `
-                        <div class="flex justify-between items-center bg-slate-900 px-4 py-2 rounded-lg text-sm">
-                            <span class="font-medium text-slate-300">อันดับ ${i+1}: ${homeName} <strong class="text-emerald-400">${sh} - ${sa}</strong> ${awayName} <span class="text-xs text-slate-400">(รวม ${totalGoals} ประตู)</span></span>
-                            <span class="text-sky-400 font-bold">${(prob * 100).toFixed(2)}%</span>
-                        </div>
-                    `;
-                }
+                let fH = (currentMode === 'ht' ? htHomeGoals : 0) + parseInt(sh);
+                let fA = (currentMode === 'ht' ? htAwayGoals : 0) + parseInt(sa);
+                topScoresHtml += `
+                    <div class="flex justify-between items-center bg-slate-900 px-4 py-2 rounded-lg text-sm">
+                        <span class="font-medium text-slate-300">อันดับ ${i+1}: ครึ่งหลังยิงเพิ่ม ${sh}-${sa} <span class="text-emerald-400 font-bold">(สกอร์รวมสะสมจบ ${fH} - ${fA})</span></span>
+                        <span class="text-sky-400 font-bold">${(prob * 100).toFixed(2)}%</span>
+                    </div>
+                `;
             }
             document.getElementById('top_scores_list').innerHTML = topScoresHtml;
 
-            let bestScore = sortedScores[0][0].split('-');
-            let bestSh = parseInt(bestScore[0]);
-            let bestSa = parseInt(bestScore[1]);
-
-            let finalSummary = "";
-            if (currentMode === 'full') {
-                let winnerText = homeWinProb > awayWinProb && homeWinProb > drawProb 
-                    ? `เจ้าบ้าน <strong class="text-sky-400">${homeName}</strong> มีโอกาสชนะสูงสุด (${homeWinProb.toFixed(1)}%)` 
-                    : (awayWinProb > homeWinProb && awayWinProb > drawProb ? `ทีมเยือน <strong class="text-rose-400">${awayName}</strong> มีโอกาสบุกคว้าชัย (${awayWinProb.toFixed(1)}%)` : `ฟอร์มสูสี โอกาสออก <strong class="text-amber-400">"เสมอ"</strong> สูงสุด (${drawProb.toFixed(1)}%)`);
-                let totalBestGoals = bestSh + bestSa;
-                let ouConclusion = totalBestGoals > ouLineVal ? `สูง Over ${ouLineVal}` : `ต่ำ Under ${ouLineVal}`;
-                finalSummary = `${winnerText} | ฟันธงสกอร์เต็มเวลา: <strong class="text-emerald-400">${homeName} ${bestSh} - ${bestSa} ${awayName}</strong> | 🎯 <strong class="text-indigo-350 text-emerald-300">ทีเด็ดเรตราคา: ${recommendedPick}</strong> (แนวโน้ม: <strong>${ouConclusion}</strong>)`;
-            } else {
-                let finalH = htHomeGoals + bestSh;
-                let finalA = htAwayGoals + bestSa;
-                let totalFinalGoals = finalH + finalA;
-                let redCardInfo = (homeRed > 0 || awayRed > 0) ? ` | 🔴 มีผลจากใบแดงที่ถูกส่งเข้าประเมิน` : ``;
-                finalSummary = `วิเคราะห์ครึ่งหลังคาดว่าจะยิงเพิ่ม ${bestSh}-${bestSa}${redCardInfo} | <strong class="text-emerald-400">ฟันธงสกอร์รวมจบเกม: ${homeName} ${finalH} - ${finalA} ${awayName} (รวมทั้งสิ้น ${totalFinalGoals} ประตู)</strong>`;
-            }
-
-            document.getElementById('final_verdict').innerHTML = finalSummary;
+            let summaryTitle = currentMode === 'full' ? "ฟันธงสกอร์เต็มเวลา:" : "ฟันธงสกอร์รวมจบเกม (สะสมจากครึ่งแรก):";
+            document.getElementById('final_verdict').innerHTML = `${summaryTitle} <strong class="text-emerald-400">${homeName} ${finalHomeGoals} - ${finalAwayGoals} ${awayName} (รวมทั้งสิ้น ${predictedTotalGoals} ประตู)</strong> | 🎯 ${bestRecommendation}`;
 
             document.getElementById('result_section').scrollIntoView({ behavior: 'smooth' });
         }
